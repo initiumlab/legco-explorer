@@ -5,3 +5,4 @@ shared/gulpfile.js
 .env
 *.sublime-*
 dist
+.publish
