@@ -1,0 +1,99 @@
+.selected {
+  font-weight: bold;
+}
+
+.charts_drawer{
+  min-height:30vh;
+  overflow-y: scroll;
+}
+
+
+/* Mapping */
+.map-overlay {
+  font-size: 1.5em;
+  /*font-weight: bold;*/
+  position: absolute;
+  bottom: 3em;
+  left: 1em;
+  z-index: 100;
+  padding: .2em .5em;
+  line-height: 1.1em;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.map-legend {
+  position: absolute;
+  right: 10px;
+  margin-right: 10px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+  top: 10px;
+}
+
+.map-legend ul {
+  padding: 5px;
+  list-style-type: none;
+  margin: 0;
+}
+
+.drawer{
+  color: white;
+  stroke: white;
+}
+.angular-leaflet-map{
+  max-height: 60vh;
+}
+
+.ui.visible.bottom.sidebar.push.visible ~ .pusher .angular-leaflet-map{
+  /*TODO delay with animation*/
+  height: 30vh !important;
+  -webkit-transition: height 500ms ease;
+    transition: height500ms ease;
+  /*need calculate together with the actual header + pushed */
+  margin-top:60vh;
+}
+
+.rzslider{
+  margin-top:1em !important;
+}
+
+.rzslider .rz-pointer{
+  /*margin-left: 8px;
+  margin-right:8px;*/
+  margin-top: 8px;
+  width: 16px !important;
+  height: 16px !important;
+}
+.rzslider .rz-pointer:after{
+  display: none;
+  margin-left: -8px;
+  margin-top: -8px;
+}
+.widget-container{
+  padding: 1em;
+  border: 1px solid black;
+}
+
+.ui.grid.header .column{
+  padding-top:0em;
+  padding-bottom:0em;
+}
+
+.ui.grid.control-panel{
+  padding-top:0em;
+}
+/*TODO refactor*/
+.ui.grid.control-panel .row{
+    padding-top:0em;
+}
+.footer{
+  color: white;
+  background-color: black;
+  padding-top: 0.5em;
+padding-bottom: 0.5em;
+padding-left: 0.5em;
+  max-height:10vh;
+}
