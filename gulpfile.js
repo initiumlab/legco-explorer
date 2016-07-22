@@ -24,7 +24,7 @@ gulp.task('build', ['copy', 'webpack']);
 
 gulp.task('deploy', ['build'], function() {
   return gulp.src(DIST + '/**/*')
-    .pipe(file('CNAME', 'legco-explorer.github.io'))
+    // .pipe(file('CNAME', ''))
    .pipe(ghPages({
    }));
 });
