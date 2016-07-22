@@ -1,0 +1,18 @@
+{
+  "default":{
+      "color": "white",
+      "fillOpacity": 0.7,
+      "opacity": 1,
+      "dashArray": "3",
+      "weight": 2
+  },
+  "hover":{
+    "fillOpacity": 0.6
+  },
+  "selected":{
+    "color": "#2ca25f",
+    "fillColor": "#2ca25f",
+    "fillOpacity": 0.2,
+    "weight": 6
+  }
+}
