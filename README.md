@@ -6,4 +6,4 @@
 
 ### Data
 - Maintained at [https://github.com/initiumlab/legco-data](https://github.com/initiumlab/legco-data) repository
-- It's loaded as submodule, run `git submodule update --remote --merge` to get latest.
+- branch `dist` is loaded as submodule, run `git submodule update --remote --merge` to get latest.

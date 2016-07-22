@@ -1,3 +1,4 @@
 [submodule "data"]
 	path = data
 	url = git@github.com:initiumlab/legco-data.git
+	branch = dist
