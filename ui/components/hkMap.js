@@ -107,7 +107,7 @@ class HkMapCtrl {
           // if (vm.selectedAreas.isSelected(code)) {
           //   return vm._selectedStyle;
           // } else {
-      return this.choroplethMapSrvc.getStyleByFeature(feature, getDataByFeature);
+      return choroplethMapSrvc.getStyleByFeature(feature, getDataByFeature);
           // return vm._defaultStyle;
           // }
     };
@@ -188,7 +188,7 @@ class HkMapCtrl {
     var _getLayerCode = function(e) {
       return e.target.feature.properties.CODE;
     };
-
+    var hoverStyle = this.mapStyleConfig.hover;
     vm.geojson = {
       data: null,
       style: featureStyler,
@@ -198,9 +198,9 @@ class HkMapCtrl {
             // TODO work as closure, further encap this
             vm.hoveredFeature = getGeoCodeByFeature(feature);
             vm.hoveredFeatureValue = getDataByFeature(feature);
-          }),
-          mouseout: this.mapControlSrvc.mouseoutHandlerFactory(vm._defaultStyle),
-          click: mapControlSrvc.selectFeatureFactory()
+          }, hoverStyle),
+          mouseout: mapControlSrvc.mouseoutHandlerFactory(vm._defaultStyle)
+          // click: mapControlSrvc.selectFeatureFactory()
         });
       }
     };

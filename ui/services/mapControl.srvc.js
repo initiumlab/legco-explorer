@@ -22,17 +22,11 @@
        // vm.hoveredFeature = undefined;
      };
    }
-   mouseoverHandlerFactory(featureCallback) {
-     var that = this;
+   mouseoverHandlerFactory(featureCallback, hoverStyle) {
      return function(e) {
       // TODO extract selection logic
        var layer = e.target;
-       layer.setStyle({
-         weight: 4,
-         color: 'white',
-        // color: '#2c7fb8',
-         dashArray: ''
-       });
+       layer.setStyle(hoverStyle);
        if (!L.Browser.ie && !L.Browser.opera) {
          layer.bringToFront();
        }
