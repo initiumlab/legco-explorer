@@ -16,6 +16,7 @@ module.exports = {
     "it": true,
     "describe": true,
     "expect": true,
-    "_": true
+    "_": true,
+    "$": true
   }
 }

@@ -6,7 +6,7 @@ module.exports = {
   entry: {
     'app': 'ui/index.js',
     'vendors': [
-      'angular', 'lodash', 'leaflet', 'angular-leaflet-directive',
+      'angular', 'angular-route', 'angular-animate', 'lodash', 'leaflet', 'angular-leaflet-directive',
       'babel-polyfill', 'topojson'
     ]
   },
@@ -65,6 +65,7 @@ module.exports = {
     'window.L': 'leaflet',
     'L': 'leaflet',
     'jQuery': 'jquery',
+    '$': 'jquery',
     'window.$': 'jquery'
     // datamap: 'datamaps/dist/datamaps.hkg.min.js'
   })],

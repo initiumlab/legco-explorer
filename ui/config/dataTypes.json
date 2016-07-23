@@ -1,0 +1,12 @@
+[
+  {
+    "alias":"population",
+    "key": "fr_dc_age_sex",
+    "legend": "登記選民的年齡組別及性別分佈"
+  },
+  {
+    "alias":"turnout",
+    "key": "fr_dc_age_sex",
+    "legend": "登記選民的年齡組別及性別分佈"
+  }
+]
