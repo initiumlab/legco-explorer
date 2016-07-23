@@ -16,16 +16,18 @@
     <div class="ui grid middle aligned control-panel">
         <div class="row attached">
             <div class="six wide column">
-                <a href="javascript:void(0)" ng-class="{'selected':vm.boundary == 'gc'}" ng-click="vm.toggleBoundary('gc')">立法會選區</a> ＞＞
-                <a href="javascript:void(0)" ng-class="{'selected':vm.boundary == 'dc'}" ng-click="vm.toggleBoundary('dc')">  18區 </a> ＞＞
-                <a href="javascript:void(0)" ng-class="{'selected':vm.boundary == 'ca'}" ng-click="vm.toggleBoundary('ca')">區議會選區 </a>
+                <div class="ui buttons">
+                    <button class="ui button" ng-click="vm.toggleBoundary('gc')" ng-class=" { 'selected':vm.boundary=='gc' }">立法會選區</button>
+                    <button class="ui button" ng-click="vm.toggleBoundary('dc')" ng-class=" { 'selected':vm.boundary=='dc' }">18區</button>
+                    <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button>
+                </div>
             </div>
             <div class="four wide column">
                 <div class="ui dropdown">
                     <div class="text">選擇資料</div>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <div class="item" ng-repeat="i in vm.dataTypes" ng-click="vm.refresh(i)" data-value="{{i.key}}">{{i.legend}}</div>
+                        <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i.key)" data-value="{{i.key}}">{{i.legend}}</div>
                     </div>
                 </div>
             </div>
@@ -39,7 +41,7 @@
     </div>
 
     <!-- <leaflet id="mymap" tiles="vm.tiles" lf-center="vm.center" height="600px" width="800px"></leaflet> -->
-    <div class="ui pushable twelve column">
+    <div cg-busy="vm.dataPromise" class="ui pushable twelve column">
         <div class="pusher">
             <hk-map height="500px" class="col-md-12" geo-shapes="vm.geojson" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
             <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">
@@ -48,22 +50,15 @@
         </div>
     </div>
     <div class="ui bottom drawer inverted labeled icon sidebar menu push">
-        <div class="">
+        <div class="close">
             <button class="ui basic inverted button" ng-click="vm.toggleCharts()">X </button>
             <!-- {{vm.geoData | prettyJSON}} -->
         </div>
 
-        <div class="ui container charts_drawer">
-            <div>
-                <div class="">
-                    <h3>基本資料</h3> 按年齡登記選民人口
-                </div>
-                <div class="">
-                    <h4>結果</h4>
-                    <div id="profile-age" class="">
-
-                    </div>
-
+        <div class="ui grid centered container charts_drawer">
+            <div class="sixteen wide centered aligned column">
+                <h3 class="row">{{vm.chartTitle}}</h3>
+                <div id="chart-container" class="row">
                 </div>
             </div>
 

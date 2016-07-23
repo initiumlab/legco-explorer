@@ -128,5 +128,8 @@ export class GeoDataModel {
     }
     return this._doGroupByBoundary(this.data, this.boundaryIndexMap[byBoundary]);
   }
+  isEmpty() {
+    return _.isEmpty(this.data);
+  }
 
 }

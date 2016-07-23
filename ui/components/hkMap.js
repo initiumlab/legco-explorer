@@ -122,7 +122,7 @@ class HkMapCtrl {
        // So instead, use a listener.
     this.$scope.$on('redrawMap', function(event, invalidateSize) {
       console.log('redrawing map');
-      this.mapControlSrvc.redrawMap(this.$attrs.mapId, invalidateSize);
+      mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize);
     });
 
     function getGeoCodeByFeature(feature) {
@@ -140,11 +140,14 @@ class HkMapCtrl {
     }
 
     function _updateGroupedData() {
-      // vm.groupedData = geoMappingsSrvc.groupByBoundary(vm.geoData, vm.boundary);
-      // model this
-      // TODO decouple
-      if (vm.geoData) {
+      if (!vm.geoData || _.isEmpty(vm.geoData)) {
+        // init, to refactor
+        vm.isNoData = false;
+      } else if (vm.geoData && !vm.geoData.isEmpty()) {
         vm.groupedData = vm.geoData.groupByBoundary(vm.boundary);
+        vm.isNoData = false;
+      } else {
+        vm.isNoData = true;
       }
       choroplethMapSrvc.updateState(vm.groupedData);
       return vm.groupedData;
@@ -155,7 +158,7 @@ class HkMapCtrl {
     });
     this.$scope.$watch('vm.geoData', function() {
       _updateGroupedData();
-      mapControlSrvc.redrawMap(mapId);
+      mapControlSrvc.redrawMap(mapId, featureStyler);
       // need layer name
       // leafletData.getGeoJSON(this.$attrs.id)
       //     .then(function(leafletGeoJSON) {

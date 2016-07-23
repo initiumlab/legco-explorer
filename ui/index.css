@@ -1,5 +1,7 @@
-.selected {
+.ui.button.selected {
   font-weight: bold;
+  background-color: #2bb6c9;
+  color: #FFFFFF;
 }
 
 .charts_drawer{
@@ -7,20 +9,36 @@
   overflow-y: scroll;
 }
 
-
-/* Mapping */
-.map-overlay {
+.map-overlay.description {
   font-size: 1.5em;
   /*font-weight: bold;*/
-  position: absolute;
   bottom: 3em;
   left: 1em;
-  z-index: 100;
   padding: .2em .5em;
   line-height: 1.1em;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 5px;
   white-space: nowrap;
+}
+.map-overlay.no-data .text{
+  position: absolute;
+ top: 50%; left: 50%;
+ transform: translate(-50%,-50%);
+}
+.map-overlay.no-data {
+  color: gray;
+  background-color:white;
+  height:100%;
+  width: 100%;
+  opacity: 0.7;
+  top:0;
+ font-size: 5em;
+}
+
+/* Mapping */
+.map-overlay {
+  z-index: 100;
+    position: absolute;
 }
 
 .map-legend {
@@ -84,6 +102,7 @@
 
 .ui.grid.control-panel{
   padding-top:0em;
+  padding-bottom:0.5em;
 }
 /*TODO refactor*/
 .ui.grid.control-panel .row{
@@ -94,4 +113,13 @@
   background-color: #151719;
 padding-left: 0.5em;
   max-height:15vh;
+}
+
+.drawer .close{
+  position: absolute;
+  z-index:999;
+}
+
+#chart-container{
+  float: none !important;
 }

@@ -1,7 +1,8 @@
+
 import dc from 'dc';
 import d3 from 'd3';
 import crossfilter from 'crossfilter';
-var toInjects = ['$scope', '$timeout', 'dataTypesConfig', 'geoShapeSrvc', 'dataSrvc', '$timeout'];
+var toInjects = ['$scope', '$timeout', 'dataTypesConfig', 'geoShapeSrvc', 'dataSrvc', '$timeout', '$routeParams', '$location'];
 var Promise = require("bluebird");
 import {agg, aggByKeys, GeoDataModel} from './services/dataMapper.js';
 export default class MainCtrl {
@@ -10,14 +11,14 @@ export default class MainCtrl {
     let vm = this;
     var $scope = this.$scope;
 
-    vm.geoShapes = {
+    vm.geoShapes = {};
 
-    };
-// TODO refactor away jquery
+    vm.dataTypesConfig = this.dataTypesConfig;
+    // TODO refactor away jquery
     $('.ui.dropdown')
-  .dropdown({
-    action: 'hide'
-  })
+    .dropdown({
+      action: 'hide'
+    })
 ;
 
     vm.toggleBoundary = function(boundary) {
@@ -54,6 +55,7 @@ export default class MainCtrl {
     vm.year = 2016;
 
     vm.slider = {
+      value: vm.year,
       options: {
         floor: 2001,
         ceil: 2016,
@@ -63,15 +65,19 @@ export default class MainCtrl {
           return '';
         }
       // use tick color more slick
-      // getLegend: v => {
-      //   if (_.includes([2008, 2012, 2016], v)) {
-      //     return '立';
-      //   } else if (_.includes([2014], v)) {
-      //     return '區';
-      //   }
-      // }
+        // getLegend: v => {
+        //   if (_.includes([2008, 2012, 2016], v)) {
+        //     return '立';
+        //   } else if (_.includes([2014], v)) {
+        //     return '區';
+        //   }
+        // }
       }
     };
+    // force refresh as wrong value onload
+    this.$timeout(function() {
+      $scope.$broadcast('rzSliderForceRender');
+    });
 
     vm.toggleCharts = function() {
       console.log('toggleCharts');
@@ -84,32 +90,60 @@ export default class MainCtrl {
     .sidebar('setting', 'closable', false)
     .sidebar('setting', 'dimPage', false)
       .sidebar('toggle');
-      vm.drawAge();
+      vm.drawCharts();
     // TODO CSS?
     // TODO need lay after toggle
       this.$timeout(function() {
         $scope.$broadcast('redrawMap', true);
       });
     };
-// $routeParams = {"bookId":"Moby"}
-    vm.selectDataType = function(key) {
-      vm.selectedDataType = _.find(this.dataTypesConfig, {key});
+
+    vm.selectDataType = function(dataType) {
+      vm.selectedDataType = dataType;
+      // TODO multiple chart
+      vm.chartTitle = vm.selectedDataType.chartTitle;
     // load data
     };
-    vm.selectDataType('fr_dc_age_sex');
+
+    let dataType = _.find(this.dataTypesConfig, {alias: this.$routeParams.dataTypeAlias});
+    if (!dataType) {
+      this.$location.path('/');
+    } else {
+      vm.selectDataType(dataType);
+    }
+
 // TODO service
     var ndx, all, ageDimension, ageDimensionGroup;
-    const CATEGORIES = ['M', 'F'];
-    this.dataSrvc.getData('fr_dc_age_sex')
-      .then(data => {
-        // TODO refactor
-        vm.data = data;
 
-        ndx = crossfilter(vm.data);
-        all = ndx.groupAll();
-        ageDimension = ndx.dimension(d => d.age_group);
+    var _createChart = function(createChartStrategy, onFilter) {
+      const elemSelector = "#chart-container";
+      createChartStrategy(elemSelector)
+      .turnOnControls(true)
+      // .width('100%')
+      .height(400)
+      .margins({left: 50, top: 20, right: 10, bottom: 20})
+      .on('filtered', function(chart, filterSelected) {
+        console.log('updated filter');
+        onFilter();
+      });
+    };
+
+    // Visualize by Type
+    vm.dataPromise = this.dataSrvc.getData('fr_dc_age_sex');
+
+    vm.dataPromise.then(data => {
+      vm.data = data;
+      console.log('draw');
+      console.log(data);
+      const CATEGORIES = ['M', 'F'];
+      const ndx = crossfilter(data);
+      const all = ndx.groupAll();
+      const yearDimension = ndx.dimension(d => d.year);
+      yearDimension.filter(vm.year);
+
+      const ageDimension = ndx.dimension(d => d.age_group);
         // TODO simplify reduceSumByKey
-        ageDimensionGroup = ageDimension.group()
+      const ageDimensionGroup = ageDimension.group()
         .reduce((p, v) => {
           p[v.category] = (p[v.category] || 0) + v.total;
           return p;
@@ -118,67 +152,50 @@ export default class MainCtrl {
           return p;
         }, () => {
           return {};
-        }
-        );
-        vm.updateGeoData();
-      }).catch(err => console.error(err));
+        });
 
-    vm.updateGeoData = function() {
-    // TODO push filter inside geodatamodel
-      var data = aggByKeys(ageDimension.top(ndx.size()));
-      vm.geoData = new GeoDataModel(data, 'dc');
-      $scope.$digest();
-    };
+      const onFilter = function() {
+        var data = aggByKeys(ageDimension.top(ndx.size()));
+        vm.geoData = new GeoDataModel(data, 'dc');
+          // $scope.$digest();
+      };
 
-    vm.drawAge = function() {
-      const elemSelector = "#profile-age";
-      let ageChart = dc.barChart(elemSelector);
+        // manual hook as out of chart
+      $scope.$watch('vm.year', (newVal, oldVal) => {
+        yearDimension.filter(newVal);
+        onFilter();
+      });
 
-    // let data = _.map(vm.data, function(v, k, o) {
-    //   return {
-    //     'Age Group': k,
-    //     'Gender': 'M',
-    //     // Should use gorup by instead
-    //     'Population': v.total
-    //   };
-    // });
+      const createAgeChart = function(elemSelector) {
+          // TODO refactor
+          // TODO responsive chart
+        const getGroupValueByKey = category => d => d.value[category];
+        return dc.barChart(elemSelector)
+            .elasticY(true)
+            .elasticX(true)
+            .on("postRender", function(chart) {
+              chart.select("svg")
+                .attr("preserveAspectRatio", "xMinYMax meet");
+              chart.redraw();
+            })
+            .x(d3.scale.ordinal())
+             .xUnits(dc.units.ordinal)
+             .legend(dc.legend().x(100).y(10).itemHeight(20).gap(5))
+            .dimension(ageDimension)
+            .group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
+            .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]))
+          .brushOn(false)
+          .clipPadding(20)
+          // .ordinalColors(['#0A2463', '#FFFFFF', '#D81C1C', '#3E92CC', '#1E1B18'])
+          .ordinalColors(['#99c0db', '#fb8072'])
+          .renderLabel(true);
+      };
 
-  //   .reduce((p, v) =>
-  //   { p.total += v.total;
-  //     return p;
-  //   },
-  //   (p, v) => {
-  //     p.total -= v.total;
-  //     return p;
-  //   },
-  // () => {
-  //   return {total: 0};
-  // });
-      const getGroupValueByKey = category => d => d.value[category];
+      _createChart(createAgeChart, onFilter);
+      onFilter();
+    }).catch(err => console.error(err));
 
-      console.log('chart data');
-      console.log(vm.data);
-      ageChart
-    .turnOnControls(true)
-    .width(1000)
-    .height(480)
-    .elasticY(true)
-    .elasticX(true)
-    .x(d3.scale.ordinal())
-     .xUnits(dc.units.ordinal)
-     .legend(dc.legend().x(100).y(10).itemHeight(20).gap(5))
-    .dimension(ageDimension)
-    .group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
-    .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]))
-    .margins({left: 50, top: 20, right: 10, bottom: 20})
-  .brushOn(false)
-  .clipPadding(20)
-  // .ordinalColors(['#0A2463', '#FFFFFF', '#D81C1C', '#3E92CC', '#1E1B18'])
-  .ordinalColors(['#99c0db', '#fb8072'])
-  .renderLabel(true)
-  .on('filtered', function(chart, filterSelected) {
-    vm.updateGeoData();
-  });
+    vm.drawCharts = function() {
       dc.renderAll();
     };
   }

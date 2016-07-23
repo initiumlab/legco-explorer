@@ -11,6 +11,9 @@ require('angularjs-slider/dist/rzslider');
 require('angularjs-slider/dist/rzslider.css');
 require('angular-semantic-ui');
 
+require('angular-busy/dist/angular-busy.js');
+require('angular-busy/dist/angular-busy.css');
+
 require('shared/semantic/dist/semantic.js');
 import MainCtrl from './main.ctrl.js';
 import GeoShapeSrvc from './services/geoshape.srvc.js';
@@ -25,7 +28,7 @@ import mapStyleConfig from './config/mapStyle.json';
 import dataTypesConfig from './config/dataTypes.json';
 
 angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
- 'ngRoute', 'ngAnimate', require('angular-bluebird-promises')])
+ 'ngRoute', 'ngAnimate', require('angular-bluebird-promises'), 'cgBusy'])
 .component('hkMap', hkMap)
 .service('geoShapeSrvc', GeoShapeSrvc)
 .service('dataSrvc', DataSrvc)
@@ -38,7 +41,7 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
 .config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
     $routeProvider
-      .when('/:dataAlias/:geoshape/', {
+      .when('/:dataTypeAlias/:geoshape/', {
         template: require('./main.html'),
         controller: 'MainCtrl',
         controllerAs: 'vm'

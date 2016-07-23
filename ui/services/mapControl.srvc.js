@@ -71,13 +71,14 @@
        }
      });
    }
-   redrawMap(mapId, invalidateSize) {
+   redrawMap(mapId, featureStyler, invalidateSize) {
      console.log('redraw');
+     let that = this;
      this.getMap(mapId).then(function(map) {
        if (invalidateSize) {
          map.invalidateSize();
        }
-       this.mapControlSrvc.updateStyle(map);
+       that.updateStyle(map, featureStyler);
      });
    }
    // Expose the map object
