@@ -44,7 +44,8 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
       .when('/:dataTypeAlias/:geoshape/', {
         template: require('./main.html'),
         controller: 'MainCtrl',
-        controllerAs: 'vm'
+        controllerAs: 'vm',
+        reloadOnSearch: false
       })
       .otherwise('/population/dc');
     // TODO HTML5 mode on github page?

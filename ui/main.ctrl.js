@@ -9,7 +9,8 @@ export default class MainCtrl {
   constructor(...args) {
     Object.assign(this, _.zipObject(toInjects, args));
     let vm = this;
-    var $scope = this.$scope;
+    let $scope = this.$scope;
+    let $location = this.$location;
 
     vm.geoShapes = {};
 
@@ -113,17 +114,16 @@ export default class MainCtrl {
     }
 
 // TODO service
-    var ndx, all, ageDimension, ageDimensionGroup;
+    var ndx, all, ageDimension, ageDimensionGroup, chart;
 
     var _createChart = function(createChartStrategy, onFilter) {
       const elemSelector = "#chart-container";
-      createChartStrategy(elemSelector)
+      return createChartStrategy(elemSelector)
       .turnOnControls(true)
       // .width('100%')
       .height(400)
       .margins({left: 50, top: 20, right: 10, bottom: 20})
       .on('filtered', function(chart, filterSelected) {
-        console.log('updated filter');
         onFilter();
       });
     };
@@ -143,6 +143,7 @@ export default class MainCtrl {
 
       const ageDimension = ndx.dimension(d => d.age_group);
         // TODO simplify reduceSumByKey
+      // grouped total Population by age group
       const ageDimensionGroup = ageDimension.group()
         .reduce((p, v) => {
           p[v.category] = (p[v.category] || 0) + v.total;
@@ -154,10 +155,14 @@ export default class MainCtrl {
           return {};
         });
 
-      const onFilter = function() {
+      const onFilter = function(filter) {
         var data = aggByKeys(ageDimension.top(ndx.size()));
         vm.geoData = new GeoDataModel(data, 'dc');
           // $scope.$digest();
+        if (filter) {
+          chart.filter(filter).redraw();
+        }
+        $location.search('ageGroup', chart.filters()[0]);
       };
 
         // manual hook as out of chart
@@ -165,6 +170,16 @@ export default class MainCtrl {
         yearDimension.filter(newVal);
         onFilter();
       });
+      $scope.$watch('$routeChangeSuccess', function() {
+        let ageGroupFilter = this.$routeParams.ageGroup;
+        // TODO validations
+        ageDimension.filter(ageGroupFilter);
+        if (ageDimension.top(ndx.size()).length === 0) {
+          ageDimension.filterAll();
+        } else {
+          onFilter(ageGroupFilter);
+        }
+      }.bind(this));
 
       const createAgeChart = function(elemSelector) {
           // TODO refactor
@@ -191,7 +206,7 @@ export default class MainCtrl {
           .renderLabel(true);
       };
 
-      _createChart(createAgeChart, onFilter);
+      chart = _createChart(createAgeChart, onFilter);
       onFilter();
     }).catch(err => console.error(err));
 
