@@ -1,0 +1,72 @@
+<div>
+    <div class="ui grid header">
+        <div class="left floated middle aligned ten wide column">
+            <h1>立法會選舉數據庫 - {{vm.selectedDataType.legend}}</h1>
+            <div class="right aligned">
+                <!-- <h2></h2> -->
+            </div>
+        </div>
+        <div class="right floated right aligned five wide column">
+            <div class="ui segment">
+                <h2>{{vm.year | yearFilter}}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui grid middle aligned control-panel">
+        <div class="row attached">
+            <div class="six wide column">
+                <div class="ui buttons">
+                    <button class="ui button" ng-click="vm.toggleBoundary('gc')" ng-class=" { 'selected':vm.boundary=='gc' }">立法會選區</button>
+                    <button class="ui button" ng-click="vm.toggleBoundary('dc')" ng-class=" { 'selected':vm.boundary=='dc' }">18區</button>
+                    <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button>
+                </div>
+            </div>
+            <div class="four wide column">
+                <div class="ui dropdown">
+                    <div class="text">選擇資料</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i.key)" data-value="{{i.key}}">{{i.legend}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="six wide column slider-continer">
+                <div class="">
+                    <rzslider rz-slider-model="vm.year" rz-slider-options="vm.slider.options"></rzslider>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- <leaflet id="mymap" tiles="vm.tiles" lf-center="vm.center" height="600px" width="800px"></leaflet> -->
+    <div cg-busy="vm.dataPromise" class="ui pushable twelve column">
+        <div class="pusher">
+            <hk-map height="500px" class="col-md-12" geo-shapes="vm.geojson" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
+            <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">
+                <i class="dropdown icon"></i>數據圖表
+            </div>
+        </div>
+    </div>
+    <div class="ui bottom drawer inverted labeled icon sidebar menu push">
+        <div class="close">
+            <button class="ui basic inverted button" ng-click="vm.toggleCharts()">X </button>
+            <!-- {{vm.geoData | prettyJSON}} -->
+        </div>
+
+        <div class="ui grid centered container charts_drawer">
+            <div class="sixteen wide centered aligned column">
+                <h3 class="row">{{vm.chartTitle}}</h3>
+                <div id="chart-container" class="row">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="ui bottom attached footer">
+        <div class="right aligned">
+            <img class="ui middle aligned tiny image" src="images/init_logo.png" style="background-color:white;" alt="logo of Initium Lab, a black square separated by two white stripes, one horizontal and one vertical" id="labLogo">
+        </div>
+    </div>
+</div>

@@ -32,16 +32,16 @@ export default class ChoroplethMapSrvc {
     // consistent scale across lc-dc-ca, but lc is based on aggreegation -- so always update with domain max
     this.choroplethState.colorScale = chroma.scale('OrRd').domain(range, 10, 'quantiles');
   }
-  _applyStylesToMap(map) {
-   // Given a map, loop through the layers in the map and apply the appropriate style given
-    var layers = _.values(map._layers);
-    _.forEach(layers, function(layer) {
-      if (!_.isUndefined(layer.feature) &&
-       !_.isUndefined(layer.feature.properties)) {
-        layer.setStyle(this.featureStyler(layer.feature));
-      }
-    });
-  }
+  // _applyStylesToMap(map) {
+  //  // Given a map, loop through the layers in the map and apply the appropriate style given
+  //   var layers = _.values(map._layers);
+  //   _.forEach(layers, function(layer) {
+  //     if (!_.isUndefined(layer.feature) &&
+  //      !_.isUndefined(layer.feature.properties)) {
+  //       layer.setStyle(this.getStyleByFeature(layer.feature));
+  //     }
+  //   });
+  // }
   _getColor(val, colorMap) {
     if (!_.isEmpty(colorMap)) {
       return this.choroplethState.colorMap[val];

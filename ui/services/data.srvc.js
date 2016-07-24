@@ -43,21 +43,18 @@ export default class DataSrvc {
   // simple key value aggregated by desired boundary
   // problem: needa change when zoom
   getData(dataType) {
-    // if(dataType==='fr_dc_age_sex'){
-    //
-    // }
-    var data = this._fetchCsv('/data/source/fr_dc_age_sex/csv/2016_dc_age_sex_e.csv')
-    .then(function(data) {
-      // knowledge of data
-      let filteredData = data
-      .slice(0, data.length - 3)
-      .filter(r => r.category !== 'Sub-total');
-      return filteredData;
-    });
+    if (dataType === 'fr_dc_age_sex') {
+      return this._fetchCsv('/data/derived/fr_dc_age_sex.csv')
+      .then(function(data) {
+        // knowledge of data
+        let filteredData = data
+        .filter(r => !_.includes(['Total', 'Grand Total', 'Grand  Total'], r.age_group));
+        return filteredData;
+      });
+    }
+
     // TODO handle aggregated case
     // do before agg but again need knowledge of that
-
-    return data;
   }
 }
 
