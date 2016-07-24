@@ -11,7 +11,7 @@ export default class MainCtrl {
     let vm = this;
     let $scope = this.$scope;
     let $location = this.$location;
-
+    let $timeout = this.$timeout;
     vm.geoShapes = {};
 
     vm.dataTypesConfig = this.dataTypesConfig;
@@ -76,11 +76,19 @@ export default class MainCtrl {
       }
     };
     // force refresh as wrong value onload
-    this.$timeout(function() {
+    $timeout(function() {
       $scope.$broadcast('rzSliderForceRender');
     });
+    vm.drawCharts = function() {
+      dc.renderAll();
+    };
 
     vm.toggleCharts = function() {
+      let chartOpenSearch = vm.isChartOpen ? null : 1;
+      $location.search('charts', chartOpenSearch);
+      _doToggleCharts();
+    };
+    function _doToggleCharts() {
       console.log('toggleCharts');
       vm.isChartOpen = !vm.isChartOpen;
       $('.drawer.sidebar')
@@ -94,11 +102,17 @@ export default class MainCtrl {
       vm.drawCharts();
     // TODO CSS?
     // TODO need lay after toggle
-      this.$timeout(function() {
+      $timeout(function() {
         $scope.$broadcast('redrawMap', true);
       });
-    };
+    }
 
+    if (this.$routeParams.charts) {
+      // TODO delay post DOM ready
+      $timeout(function() {
+        _doToggleCharts();
+      });
+    }
     vm.selectDataType = function(dataType) {
       vm.selectedDataType = dataType;
       // TODO multiple chart
@@ -209,10 +223,6 @@ export default class MainCtrl {
       chart = _createChart(createAgeChart, onFilter);
       onFilter();
     }).catch(err => console.error(err));
-
-    vm.drawCharts = function() {
-      dc.renderAll();
-    };
   }
 }
 
