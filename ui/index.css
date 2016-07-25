@@ -1,5 +1,8 @@
-.ui.button.selected {
-  font-weight: bold;
+.ui.buttons .button{
+    /*font-weight: 100;*/
+    line-height: 0.5rm;
+}
+.ui.buttons .button.selected {
   background-color: #2bb6c9;
   color: #FFFFFF;
 }

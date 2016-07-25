@@ -1,6 +1,6 @@
 // extract as csv query module
 import _ from 'lodash';
-
+import numeral from 'numeral';
 // keys are columns, return aggregated values by keys
 // groupBy is to groupBy values.
 // groupBy first then keys first TODO if keys are same as groupBy, should aggregate rest columns
@@ -27,9 +27,10 @@ export function agg(data, filters, keys, groupByKey) {
 }
 // TODO consider http://numeraljs.com/ unformat
 // keep if not number
-export function asNumber(v) {
-  if (_.isString(v) && v.match(/^(\d+,)*[\d]+$/)) {
-    return parseInt(v.replace(/,/g, ''), 10);
+export function asNumberIfNumber(v) {
+  if (_.isString(v) && v.trim().match(/^(\d+,)*[\d]+$/)) {
+    // return parseFloat(v.replace(/[, ]/g, ''));
+    return numeral(v).value();
   }
   return v;
 }
@@ -37,7 +38,8 @@ function asNumberOrZero(n) {
   if (_.isUndefined(n) || n === '') {
     return 0;
   }
-  return asNumber(n, 10);
+  return numeral(n).value();
+  // return asNumber(n, 10);
 }
 // Force to numbers when sum
 function aggFields(keys, headers, records) {
@@ -57,13 +59,33 @@ export function aggByKeys(records) {
     return r;
   }, {});
 }
-
+export function unpivot(records, fields, fieldKey) {
+  return _.reduce(records, (r, o, i) => {
+    Object.keys(o).forEach(k => {
+      var result = {};
+      // duplicate
+      if (_.includes(fields, k)) {
+        result[fieldKey] = k;
+        result.value = o[k];
+        _.difference(Object.keys(o), fields).forEach(
+        k => {
+          result[k] = o[k];
+        });
+        r.push(result);
+      }
+    });
+    return r;
+  }, []);
+}
 // TODO extract
 import GeoMappingsSrvc from './geoMappings.srvc.js';
 export class GeoDataModel {
-  constructor(data, rawBoundary, nestedLevel) {
-    Object.assign(this, {data, rawBoundary, nestedLevel});
+  constructor(data, rawBoundary, nestedLevel, reducer, valueAccessor) {
+    Object.assign(this, {data, rawBoundary, nestedLevel, reducer, valueAccessor});
     this.geoMappings = new GeoMappingsSrvc();
+    if (!valueAccessor) {
+      this.valueAccessor = v => v;
+    }
     // TODO extract const
     this.boundaryIndexMap = {
       'gc': 4,
@@ -106,16 +128,24 @@ export class GeoDataModel {
     console.log(data);
     while (byBoundaryIndex > currentBoundaryIndex) {
       // TODO use aggByKeys
+
+      // original data vs accessed
       data = _.reduce(_.pick(data, filters), (r, v, k) => {
         let code = getAggCode(k);
-        r[code] = v + asNumberOrZero(r[code]);
+        // Quick fix to support a custom reducer for percent agg
+        // better to support dimension as data
+        if (this.reducer) {
+          r[code] = this.reducer(v, asNumberOrZero(r[code]));
+        } else {
+          r[code] = v + asNumberOrZero(r[code]);
+        }
         return r;
       }, {});
       currentBoundaryIndex++;
       [filters, getAggCode] = this._getFiltersAndAggFx(data, currentBoundaryIndex);
     }
     console.log(filters);
-    return _.pick(data, filters);
+    return _.mapValues(_.pick(data, filters), this.valueAccessor);
   }
   groupByBoundary(byBoundary, level) {
     if (this._isUnavailableBoundaryData(byBoundary)) {

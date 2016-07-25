@@ -2,15 +2,16 @@
 * Return desired data including census / legco mapped by areas
 */
 import Papa from 'papaparse';
-import {agg, asNumber} from './dataMapper.js';
+import {agg, asNumberIfNumber, unpivot} from './dataMapper.js';
 import _ from 'lodash';
 import d3 from 'd3';
+import numeral from 'numeral';
 
 function collectionAsNumbers(data) {
   if (_.isArray(data)) {
-    return data.map(v => _.mapValues(v, asNumber));
+    return data.map(o => _.mapValues(o, asNumberIfNumber));
   }
-  return _.mapValues(data, asNumber);
+  return _.mapValues(data, asNumberIfNumber);
 }
       // _.zipObject to add header back if needed
       // TODO proper mixin if keep this
@@ -20,11 +21,14 @@ function parseCsv(data, withHeader) {
   }).data);
 }
 function parseCsvAsNumbers(data) {
-  var csvData = Papa.parse(data, {
+  var parsed = Papa.parse(data, {
     header: true,
     skipEmptyLines: true
-  }).data;
-  return collectionAsNumbers(_.values(csvData));
+  });
+  if (parsed.errors.length > 0) {
+    throw new Error('Error parsing CSV');
+  }
+  return collectionAsNumbers(_.values(parsed.data));
 }
 
 export default class DataSrvc {
@@ -50,6 +54,14 @@ export default class DataSrvc {
         let filteredData = data
         .filter(r => !_.includes(['Total', 'Grand Total', 'Grand  Total'], r.age_group));
         return filteredData;
+      });
+    } else if (dataType === 'vt_by_gc_ps_hour') {
+      return this._fetchCsv('/data/derived/vt_by_gc_ps_hour.csv')
+      .then(function(data) {
+        // knowledge of data
+        console.log('test');
+        const fields = ['0830', '0930', '1030', '1130', '1230', '1330', '1430', '1530', '1630', '1730', '1830', '1930', '2030', '2130', '2230'];
+        return unpivot(data, fields, 'time');
       });
     }
 

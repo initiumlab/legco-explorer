@@ -1,7 +1,14 @@
 <div>
     <div class="ui grid header">
         <div class="left floated middle aligned ten wide column">
-            <h1>立法會選舉數據庫 - {{vm.selectedDataType.legend}}</h1>
+            <h1>立法會選舉數據庫 </h1>
+            <div class="ui dropdown">
+                <div class="text">{{vm.selectedDataType.legend}}</div>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i)" data-value="{{i.key}}">{{i.legend}}</div>
+                </div>
+            </div>
             <div class="right aligned">
                 <!-- <h2></h2> -->
             </div>
@@ -23,13 +30,6 @@
                 </div>
             </div>
             <div class="four wide column">
-                <div class="ui dropdown">
-                    <div class="text">選擇資料</div>
-                    <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i.key)" data-value="{{i.key}}">{{i.legend}}</div>
-                    </div>
-                </div>
             </div>
             <div class="six wide column slider-continer">
                 <div class="">
@@ -43,7 +43,7 @@
     <!-- <leaflet id="mymap" tiles="vm.tiles" lf-center="vm.center" height="600px" width="800px"></leaflet> -->
     <div cg-busy="vm.dataPromise" class="ui pushable twelve column">
         <div class="pusher">
-            <hk-map height="500px" class="col-md-12" geo-shapes="vm.geojson" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
+            <hk-map height="500px" class="col-md-12" geo-shapes="vm.geojson" value-formatter="vm.valueFormatter" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
             <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">
                 <i class="dropdown icon"></i>數據圖表
             </div>
