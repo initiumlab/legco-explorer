@@ -19,6 +19,7 @@ export default class MainCtrl {
     let $scope = this.$scope;
     let $location = this.$location;
     let dataSrvc = this.dataSrvc;
+    let $timeout = this.$timeout;
     let $routeParams = this.$routeParams;
     vm.geoShapes = {};
 
@@ -86,8 +87,16 @@ export default class MainCtrl {
     this.$timeout(function() {
       $scope.$broadcast('rzSliderForceRender');
     });
+    vm.drawCharts = function() {
+      dc.renderAll();
+    };
 
     vm.toggleCharts = function() {
+      let chartOpenSearch = vm.isChartOpen ? null : 1;
+      $location.search('charts', chartOpenSearch);
+      _doToggleCharts();
+    };
+    function _doToggleCharts() {
       console.log('toggleCharts');
       vm.isChartOpen = !vm.isChartOpen;
       $('.drawer.sidebar')
@@ -99,13 +108,19 @@ export default class MainCtrl {
                 .sidebar('setting', 'dimPage', false)
                 .sidebar('toggle');
       vm.drawCharts();
-            // TODO CSS?
-            // TODO need lay after toggle
+      // TODO CSS?
+      // TODO need lay after toggle
       this.$timeout(function() {
         $scope.$broadcast('redrawMap', true);
       });
-    };
+    }
 
+    if (this.$routeParams.charts) {
+      // TODO delay post DOM ready
+      $timeout(function() {
+        _doToggleCharts();
+      });
+    }
     vm.selectDataType = function(dataType) {
       vm.selectedDataType = dataType;
             // TODO multiple chart
@@ -299,7 +314,6 @@ export default class MainCtrl {
                           .renderLabel(true);
           };
         }
-
                 // manual hook as out of chart
         $scope.$watch('vm.year', (newVal, oldVal) => {
           yearDimension.filter(newVal);
