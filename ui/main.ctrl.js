@@ -39,7 +39,6 @@ export default class MainCtrl {
       } else {
         vm.geojson = vm.geoShapes.districts;
       }
-
             // event for zoom level
     };
 
@@ -111,7 +110,8 @@ export default class MainCtrl {
       // TODO CSS?
       // TODO need lay after toggle
       $timeout(function() {
-        $scope.$broadcast('redrawMap', true);
+        let targetZoom = vm.isChartOpen ? 10 : 11;
+        $scope.$broadcast('redrawMap', true, targetZoom);
       });
     }
 
@@ -155,6 +155,7 @@ export default class MainCtrl {
                 })
                 .on('filtered', function(chart, filterSelected) {
                   onFilter();
+                  $scope.$digest();
                 });
     };
 
@@ -302,7 +303,7 @@ export default class MainCtrl {
                           })
                           .x(d3.scale.ordinal())
                           .xUnits(dc.units.ordinal)
-                          .legend(dc.legend().x(100).y(10).itemHeight(20).gap(5))
+                          .legend(dc.legend().x(50).y(10).itemHeight(20).gap(5))
                           .dimension(ageDimension)
                           .group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
                           .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]))

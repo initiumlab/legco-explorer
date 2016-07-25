@@ -7,6 +7,16 @@
   color: #FFFFFF;
 }
 
+.year-title{
+  margin-bottom:0em;
+}
+
+.election-title{
+  margin-top:0em;
+  /*min-height:1em;*/
+}
+
+
 .charts_drawer{
   min-height:30vh;
   overflow-y: scroll;
@@ -15,7 +25,7 @@
 .map-overlay.description {
   font-size: 1.5em;
   /*font-weight: bold;*/
-  bottom: 3em;
+  bottom: 2.5vh;
   left: 1em;
   padding: .2em .5em;
   line-height: 1.1em;
@@ -87,6 +97,7 @@
   margin-top: 8px;
   width: 16px !important;
   height: 16px !important;
+  background-color: #2bb6c9 !important;
 }
 .rzslider .rz-pointer:after{
   display: none;

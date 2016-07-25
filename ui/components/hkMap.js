@@ -32,7 +32,7 @@ class HkMapCtrl {
     vm.defaults = {
       scrollWheelZoom: true,
       maxZoom: 18,
-      minZoom: 11
+      minZoom: 10
     };
 
     vm.center = {
@@ -125,9 +125,9 @@ class HkMapCtrl {
         // }
         // TODO optimize this
        // So instead, use a listener.
-    this.$scope.$on('redrawMap', function(event, invalidateSize) {
+    this.$scope.$on('redrawMap', function(event, invalidateSize, targetZoom) {
       console.log('redrawing map');
-      mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize);
+      mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize, targetZoom);
     });
 
     function getGeoCodeByFeature(feature) {

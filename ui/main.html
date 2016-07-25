@@ -13,9 +13,10 @@
                 <!-- <h2></h2> -->
             </div>
         </div>
-        <div class="right floated right aligned five wide column">
+        <div class="right floated right aligned six wide column">
             <div class="ui segment">
-                <h2>{{vm.year | yearFilter}}</h2>
+                <h2 class="year-title">{{vm.year}}</h2>
+                <h3 class="election-title">{{vm.year | yearElectionFilter}}</h3>
             </div>
         </div>
     </div>
@@ -26,7 +27,7 @@
                 <div class="ui buttons">
                     <button class="ui button" ng-click="vm.toggleBoundary('gc')" ng-class=" { 'selected':vm.boundary=='gc' }">立法會選區</button>
                     <button class="ui button" ng-click="vm.toggleBoundary('dc')" ng-class=" { 'selected':vm.boundary=='dc' }">18區</button>
-                    <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button>
+                    <!-- <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button> -->
                 </div>
             </div>
             <div class="four wide column">
