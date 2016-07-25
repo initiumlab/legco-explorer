@@ -82,7 +82,7 @@ export default class MainCtrl {
 
     vm.toggleCharts = function() {
       let chartOpenSearch = vm.isChartOpen ? null : 1;
-      $location.search('charts', chartOpenSearch, false);
+      $location.search('charts', chartOpenSearch);
       _doToggleCharts();
     };
     function _doToggleCharts() {
@@ -147,6 +147,11 @@ export default class MainCtrl {
       return createChartStrategy(elemSelector)
                 .turnOnControls(true)
                 // .width('100%')
+                .on("postRender", function(chart) {
+                  chart.select("svg")
+                        .attr("preserveAspectRatio", "xMinYMax meet");
+                  chart.redraw();
+                })
                 .height(400)
                 .margins({
                   left: 50,
@@ -155,6 +160,8 @@ export default class MainCtrl {
                   bottom: 20
                 })
                 .on('filtered', function(chart, filterSelected) {
+                  console.log('ar');
+                  console.log(arguments);
                   onFilter();
                   $scope.$digest();
                 });
@@ -184,27 +191,8 @@ export default class MainCtrl {
 // clear
         if (dataType === 'vt_by_gc_ps_hour') {
           timeDimension = ndx.dimension(d => d.time);
-          timeDimension.filter('2230');
 
           votersbyTimeGroup = timeDimension.group().reduceSum(d => d.value);
-          // patch the crossfilter
-
-          // let ndx = crossfilter(['0830', '0930', '1030']);
-          // // newNdx.dimension(v => v);
-          //
-          // const dcDimension = ndx.dimension(d => d.dc);
-
-          // TODO plot turnout by hour if need
-          // TODO fix
-
-          let byDcEntries =
-          d3.nest().key(d => d.dc.toLowerCase())
-          .rollup(leaves => {
-            let voters = _.sumBy(leaves, l => l.value);
-            let electors = _.sumBy(leaves, l => l['electors']);
-            return {voters, electors};
-          })
-          .entries(timeDimension.top(ndx.size()));
 
           createChartStrategy = function(elemSelector) {
             console.log('line chart');
@@ -230,6 +218,16 @@ export default class MainCtrl {
           // TODO agg by .dc, using d3
           // or reuse dimensiongroup
           onFilter = function(filter) {
+            let byDcEntries =
+            d3.nest().key(d => d.dc.toLowerCase())
+            .rollup(leaves => {
+              let voters = _.sumBy(leaves, l => l.value);
+              let electors = _.sumBy(leaves, l => l['electors']);
+              return {voters, electors};
+            })
+            .entries(timeDimension.filter('2230').top(ndx.size()));
+            timeDimension.filterAll();
+            // TODO one off filter?
             let byDc = _.merge({}, ...byDcEntries.map(o => _.fromPairs([[o.key, o.values]])));
             vm.geoData = new GeoDataModel(byDc, 'dc', function reducer(v1, v2) {
               return {
@@ -239,6 +237,8 @@ export default class MainCtrl {
             }, function accessor(v) {
               return numeral(v.voters).divide(v.electors).value();
             });
+            console.log('filter');
+            console.log(filter);
             if (filter) {
               chart.filter(filter).redraw();
             }
@@ -263,14 +263,21 @@ export default class MainCtrl {
                         return {};
                       });
 
-          onFilter = function(filter) {
+          onFilter = function(filters) {
             var data = aggByKeys(ageDimension.top(ndx.size()));
             vm.geoData = new GeoDataModel(data, 'dc');
                       // $scope.$digest();
-            if (filter) {
-              chart.filter(filter).redraw();
+            console.log('filter');
+            // console.log(chart.filter());
+
+            if (filters) {
+              chart.filter([filters]);
             }
-            $location.search('ageGroup', chart.filters()[0]);
+            if (chart.svg()) {
+              chart.redraw();
+            }
+
+            $location.search('ageGroup', chart.filters().join(','));
           };
           createChartStrategy = function(elemSelector) {
                       // TODO responsive chart
@@ -278,8 +285,11 @@ export default class MainCtrl {
             // TODO extract
             $scope.$watch('$routeChangeSuccess', function() {
               let ageGroupFilter = $routeParams.ageGroup;
+              if (ageGroupFilter) {
+                ageGroupFilter = ageGroupFilter.split(',');
+              }
                         // TODO validations
-              ageDimension.filter(ageGroupFilter);
+              ageDimension.filterFunction(ageGroup => _.includes(ageGroupFilter, ageGroup));
               if (ageDimension.top(ndx.size()).length === 0) {
                 ageDimension.filterAll();
               } else {
@@ -289,11 +299,6 @@ export default class MainCtrl {
             return dc.barChart(elemSelector)
                           .elasticY(true)
                           .elasticX(true)
-                          .on("postRender", function(chart) {
-                            chart.select("svg")
-                                  .attr("preserveAspectRatio", "xMinYMax meet");
-                            chart.redraw();
-                          })
                           .x(d3.scale.ordinal())
                           .xUnits(dc.units.ordinal)
                           .legend(dc.legend().x(50).y(10).itemHeight(20).gap(5))
