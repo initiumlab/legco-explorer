@@ -80,8 +80,8 @@ export function unpivot(records, fields, fieldKey) {
 // TODO extract
 import GeoMappingsSrvc from './geoMappings.srvc.js';
 export class GeoDataModel {
-  constructor(data, rawBoundary, nestedLevel, reducer, valueAccessor) {
-    Object.assign(this, {data, rawBoundary, nestedLevel, reducer, valueAccessor});
+  constructor(data, rawBoundary, reducer, valueAccessor) {
+    Object.assign(this, {data, rawBoundary, reducer, valueAccessor});
     this.geoMappings = new GeoMappingsSrvc();
     if (!valueAccessor) {
       this.valueAccessor = v => v;

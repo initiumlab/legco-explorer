@@ -84,7 +84,7 @@
   -webkit-transition: height 500ms ease;
     transition: height500ms ease;
   /*need calculate together with the actual header + pushed */
-  margin-top:60vh;
+  margin-top:32rem;
 }
 
 .rzslider{

@@ -41,13 +41,13 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
 .config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
     $routeProvider
-      .when('/:dataTypeAlias/:geoshape/', {
+      .when('/:dataTypeAlias/:boundary/', {
         template: require('./main.html'),
         controller: 'MainCtrl',
         controllerAs: 'vm',
         reloadOnSearch: false
       })
-      .otherwise('/population/dc');
+      .otherwise('/population/gc');
     // TODO HTML5 mode on github page?
     $locationProvider.html5Mode(false);
   }])
@@ -60,10 +60,33 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
 })
 .filter('yearElectionFilter', () => {
   // TODO decouple year & election
-  return year => {
+  return (year, isByE) => {
+    if (isByE && year === 2016) {
+      return '立法會新界東補選';
+    }
     if (_.includes([2008, 2012, 2016], year)) {
       return '立法會選舉';
     }
     return ' ';
   };
-});
+})
+// for semantic url http://joelsaupe.com/programming/angularjs-change-path-without-reloading/
+
+.run(['$route', '$rootScope', '$location', function($route, $rootScope, $location) {
+  var original = $location.path;
+  $location.path = function(path, reload) {
+    console.log('reload');
+    console.log(reload);
+    if (reload === false) {
+      path = path.replace(/\/?$/, '/');
+      // prevent further redirect /population/dc -> /population/dc/
+      var lastRoute = $route.current;
+      var un = $rootScope.$on('$locationChangeSuccess', function() {
+        $route.current = lastRoute;
+        un();
+      });
+    }
+
+    return original.apply($location, [path]);
+  };
+}]);
