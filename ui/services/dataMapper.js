@@ -124,8 +124,6 @@ export class GeoDataModel {
     let currentBoundaryIndex = this.boundaryIndexMap[this.rawBoundary];
 
     let [filters, getAggCode] = this._getFiltersAndAggFx(data, currentBoundaryIndex);
-    console.log('data');
-    console.log(data);
     while (byBoundaryIndex > currentBoundaryIndex) {
       // TODO use aggByKeys
 
@@ -144,7 +142,6 @@ export class GeoDataModel {
       currentBoundaryIndex++;
       [filters, getAggCode] = this._getFiltersAndAggFx(data, currentBoundaryIndex);
     }
-    console.log(filters);
     return _.mapValues(_.pick(data, filters), this.valueAccessor);
   }
   groupByBoundary(byBoundary, level) {

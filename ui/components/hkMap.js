@@ -28,6 +28,8 @@ class HkMapCtrl {
     let mapControlSrvc = this.mapControlSrvc;
     let mapId = this.$attrs.mapId;
     let vm = this;
+    let $scope = this.$scope;
+    let geoMappingsSrvc = this.geoMappingsSrvc;
    // Default initializations
     vm.defaults = {
       scrollWheelZoom: true,
@@ -209,8 +211,14 @@ class HkMapCtrl {
           // OR separate formated value & choro value
           mouseout: mapControlSrvc.mouseoutHandlerFactory(function(feature) {
             vm.displayFeature = false;
-          }, defaultStyle)
-          // click: mapControlSrvc.selectFeatureFactory()
+          }, defaultStyle),
+          click: function(e) {
+            // TODO find leaflet event
+            let geoCode = getGeoCodeByFeature(e.target.feature);
+            $scope.$emit('feature.clicked', geoCode, geoMappingsSrvc.getNameByBoundary(geoCode, vm.boundary));
+
+            $scope.$digest();
+          }
         });
       }
     };
