@@ -110,7 +110,7 @@ export default class MainCtrl {
       vm.drawCharts();
       // TODO CSS?
       // TODO need lay after toggle
-      this.$timeout(function() {
+      $timeout(function() {
         $scope.$broadcast('redrawMap', true);
       });
     }
@@ -165,7 +165,7 @@ export default class MainCtrl {
     function _drawTurnout() {
 
     }
-    vm.valueFormatter = v => numeral(v).format('0,0');
+    vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
 
     function _loadDataAndDraw(dataType) {
             // Visualize by Type

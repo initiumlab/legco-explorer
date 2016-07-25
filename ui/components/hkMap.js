@@ -41,6 +41,7 @@ class HkMapCtrl {
       zoom: 11
     };
 
+    // todo refactor into config
     vm.layers = {
       baselayers: {
         googleRoadMap: {
@@ -49,6 +50,10 @@ class HkMapCtrl {
           type: 'google'
         }
       }
+    };
+
+    vm.geocodeFormatter = v => {
+      return this.geoMappingsSrvc.getNameByBoundary(v, vm.boundary);
     };
 
    // The zoom level after which areas are drawn
@@ -173,22 +178,6 @@ class HkMapCtrl {
       return !_.isUndefined(f.properties.CA);
     };
 
-   // Handlers for interaction
-    var mouseoverHandler = function(e) {
-      var layer = e.target;
-      var code = _getLayerCode(e);
-     // only change the style if the area is not already selected
-      if (!vm.selectedAreas.isSelected(code)) {
-        layer.setStyle(vm._hoverStyle);
-        if (!L.Browser.ie && !L.Browser.opera) {
-          layer.bringToFront();
-        }
-      }
-
-      var prefix = _isArea(e.target.feature) ? "area." : "district.";
-      vm.hoveredFeature = prefix + code.toLowerCase();
-    };
-
     var _getLayerCode = function(e) {
       return e.target.feature.properties.CODE;
     };
@@ -202,7 +191,7 @@ class HkMapCtrl {
           mouseover: mapControlSrvc.mouseoverHandlerFactory(function(feature) {
             // TODO work as closure, further encap this
             // TODO fix post filter
-            vm.hoveredFeature = getGeoCodeByFeature(feature);
+            vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
             vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
           }, hoverStyle),
 
