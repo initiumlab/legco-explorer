@@ -30,6 +30,8 @@ export default class MainCtrl {
     }
     _initSelection();
     vm.dataTypesConfig = this.dataTypesConfig;
+
+    let removeGeoClickCb;
         // TODO refactor away jquery
     $('.ui.dropdown')
             .dropdown({
@@ -154,6 +156,7 @@ export default class MainCtrl {
 
     var _createChart = function(createChartStrategy, onFilter) {
       const elemSelector = "#chart-container";
+      removeGeoClickCb ? removeGeoClickCb() : null;
       d3.select(elemSelector + " svg").remove();
       return createChartStrategy(elemSelector)
                 .turnOnControls(true)
@@ -313,6 +316,31 @@ export default class MainCtrl {
                 onFilter(ageGroupFilter);
               }
             });
+
+            removeGeoClickCb = $scope.$on('feature.clicked', (event, geoCode, geoCodeFormatted) => {
+              console.log('clicked');
+              let valueAccessor;
+              if (vm.selectedGeoCode !== geoCode) {
+                // quick impl of unselect
+                vm.selectedGeoCode = geoCode;
+                vm.selectedGeoshape = geoCodeFormatted;
+                valueAccessor = v => {
+                  // inefficient but work
+                  let model = new GeoDataModel(v, 'dc');
+                  return model.groupByBoundary(vm.boundary)[geoCode];
+                };
+              } else {
+                _initSelection();
+              }
+              // hack to manually select the value as data isn't proper in geo dimension
+              const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
+              chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
+              .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
+              onFilter();
+              $scope.$digest();
+              // vm.geoData
+            });
+
             return dc.barChart(elemSelector)
                           .elasticY(true)
                           .elasticX(true)
@@ -330,29 +358,6 @@ export default class MainCtrl {
                           // .ordinalColors(['#9AC5E2', '#F7B8A1'])
                           // .renderLabel(true);
           };
-          $scope.$on('feature.clicked', (event, geoCode, geoCodeFormatted) => {
-            console.log('clicked');
-            let valueAccessor;
-            if (vm.selectedGeoCode !== geoCode) {
-              // quick impl of unselect
-              vm.selectedGeoCode = geoCode;
-              vm.selectedGeoshape = geoCodeFormatted;
-              valueAccessor = v => {
-                // inefficient but work
-                let model = new GeoDataModel(v, 'dc');
-                return model.groupByBoundary(vm.boundary)[geoCode];
-              };
-            } else {
-              _initSelection();
-            }
-            // hack to manually select the value as data isn't proper in geo dimension
-            const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
-            chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
-            .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
-            onFilter();
-            $scope.$digest();
-            // vm.geoData
-          });
         }
                 // manual hook as out of chart
         $scope.$watch('vm.year', (newVal, oldVal) => {
