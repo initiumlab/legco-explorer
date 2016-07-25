@@ -33,7 +33,7 @@ export default class MainCtrl {
     vm.boundary = 'gc';
     vm.toggleBoundary = function(boundary) {
       vm.boundary = boundary;
-      $location.path('/population/' + boundary, false);
+      $location.path(['/', $routeParams.dataTypeAlias, '/', boundary].join(''), false);
     };
 
     this.geoShapeSrvc.getDC()
@@ -112,6 +112,11 @@ export default class MainCtrl {
       });
     }
     vm.selectDataType = function(dataType) {
+      _updateDataType(dataType);
+      $location.path(['/', dataType.alias, '/', vm.boundary].join(''), false);
+    };
+
+    function _updateDataType(dataType) {
       vm.selectedDataType = dataType;
       // TODO fix this temp hack
       if (vm.selectedDataType.key === 'vt_by_gc_ps_hour') {
@@ -119,19 +124,18 @@ export default class MainCtrl {
       } else {
         vm.isByE = false;
       }
-
             // TODO multiple chart
       vm.chartTitle = vm.selectedDataType.chartTitle;
       _loadDataAndDraw(vm.selectedDataType.key);
-    };
+    }
 
     let dataType = _.find(this.dataTypesConfig, {
       alias: $routeParams.dataTypeAlias
     });
-    if (!dataType) {
-      this.$location.path('/population?by=gc');
+    if (dataType) {
+      _updateDataType(dataType);
     } else {
-      vm.selectDataType(dataType);
+      this.$location.path('/population?by=gc');
     }
 
         // TODO service
@@ -229,8 +233,8 @@ export default class MainCtrl {
             let byDc = _.merge({}, ...byDcEntries.map(o => _.fromPairs([[o.key, o.values]])));
             vm.geoData = new GeoDataModel(byDc, 'dc', function reducer(v1, v2) {
               return {
-                voters: (v1.voters + v2.voters),
-                electors: (v1.electors + v2.electors)
+                voters: _.sum([(v1 || {}).voters, (v2 || {}).voters]),
+                electors: _.sum([(v1 || {}).electors, (v2 || {}).electors])
               };
             }, function accessor(v) {
               return numeral(v.voters).divide(v.electors).value();

@@ -135,7 +135,7 @@ export class GeoDataModel {
         // Quick fix to support a custom reducer for percent agg
         // better to support dimension as data
         if (this.reducer) {
-          r[code] = this.reducer(v, asNumberOrZero(r[code]));
+          r[code] = this.reducer(v, r[code]);
         } else {
           r[code] = v + asNumberOrZero(r[code]);
         }
