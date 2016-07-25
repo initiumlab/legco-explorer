@@ -1,4 +1,4 @@
-<div>
+<div ng-cloak>
     <div class="ui grid header">
         <div class="left floated middle aligned ten wide column">
             <h1>立法會選舉數據庫 </h1>
@@ -16,7 +16,7 @@
         <div class="right floated right aligned six wide column">
             <div class="ui segment">
                 <h2 class="year-title">{{vm.year}}</h2>
-                <h3 class="election-title">{{vm.year | yearElectionFilter}}</h3>
+                <h3 class="election-title">{{vm.year | yearElectionFilter:vm.isByE}}</h3>
             </div>
         </div>
     </div>

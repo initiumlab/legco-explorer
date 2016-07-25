@@ -30,11 +30,11 @@ export default class MainCtrl {
               action: 'hide'
             });
 
+    vm.boundary = 'gc';
     vm.toggleBoundary = function(boundary) {
       vm.boundary = boundary;
+      $location.path('/population/' + boundary, false);
     };
-
-    vm.boundary = 'gc';
 
     this.geoShapeSrvc.getDC()
             .then(function(data) {
@@ -82,7 +82,7 @@ export default class MainCtrl {
 
     vm.toggleCharts = function() {
       let chartOpenSearch = vm.isChartOpen ? null : 1;
-      $location.search('charts', chartOpenSearch);
+      $location.search('charts', chartOpenSearch, false);
       _doToggleCharts();
     };
     function _doToggleCharts() {
@@ -113,6 +113,13 @@ export default class MainCtrl {
     }
     vm.selectDataType = function(dataType) {
       vm.selectedDataType = dataType;
+      // TODO fix this temp hack
+      if (vm.selectedDataType.key === 'vt_by_gc_ps_hour') {
+        vm.isByE = true;
+      } else {
+        vm.isByE = false;
+      }
+
             // TODO multiple chart
       vm.chartTitle = vm.selectedDataType.chartTitle;
       _loadDataAndDraw(vm.selectedDataType.key);
@@ -122,7 +129,7 @@ export default class MainCtrl {
       alias: $routeParams.dataTypeAlias
     });
     if (!dataType) {
-      this.$location.path('/');
+      this.$location.path('/population?by=gc');
     } else {
       vm.selectDataType(dataType);
     }
@@ -148,14 +155,6 @@ export default class MainCtrl {
                   $scope.$digest();
                 });
     };
-
-    function _drawAge() {
-
-    }
-
-    function _drawTurnout() {
-
-    }
     vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
 
     function _loadDataAndDraw(dataType) {
@@ -216,8 +215,8 @@ export default class MainCtrl {
                    .xUnits(dc.units.ordinal)
                    .dimension(timeDimension)
                    .group(votersbyTimeGroup)
+                   .renderHorizontalGridLines(true)
                    .valueAccessor(function(d) {
-                     console.log(d);
                      return d.value;
                    })
                    .mouseZoomable(true);

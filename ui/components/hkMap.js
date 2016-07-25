@@ -60,14 +60,12 @@ class HkMapCtrl {
     var AREATHRESHOLD = 13;
 
     // If we zoom in further than >= 14, then switch over to the constituency areas layer
+
     this.$scope.$watch('vm.center.zoom', function(newVal) {
       if (newVal >= AREATHRESHOLD) {
-        // TODO refactor pull it down
-        // update vm.geoShapes first
         vm.boundary = 'dc';
-      } else {
-        vm.boundary = 'gc';
       }
+      // not the other way round (to gc)
     });
 
    // TODO change per injected theme key
@@ -158,7 +156,7 @@ class HkMapCtrl {
       return vm.groupedData;
     }
 
-    function updateShapePerBoundary(boundary) {
+    function _updateShapePerBoundary(boundary) {
       if (boundary === 'gc') {
         vm.geojson.data = vm.geoShapes.gc;
       } else if (boundary === 'ca') {
@@ -168,8 +166,8 @@ class HkMapCtrl {
       }
     }
     this.$scope.$watch('vm.boundary', function() {
-            // event for zoom level
-      updateShapePerBoundary(vm.boundary);
+      _updateShapePerBoundary(vm.boundary);
+
       _updateGroupedData();
       mapControlSrvc.redrawMap(mapId, featureStyler);
     });
@@ -216,7 +214,7 @@ class HkMapCtrl {
     // TODO fix this temp hack to trigger shape load
     this.$scope.$watch('vm.geoShapes.gc', function(newVal) {
       if (!_.isEmpty(newVal)) {
-        updateShapePerBoundary(vm.boundary);
+        _updateShapePerBoundary(vm.boundary);
         console.log('shape updated');
       }
     });
