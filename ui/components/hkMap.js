@@ -202,11 +202,14 @@ class HkMapCtrl {
             // TODO fix post filter
             vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
             vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
+            vm.displayFeature = true;
           }, hoverStyle),
 
           // chart specific injected here
           // OR separate formated value & choro value
-          mouseout: mapControlSrvc.mouseoutHandlerFactory(defaultStyle)
+          mouseout: mapControlSrvc.mouseoutHandlerFactory(function(feature) {
+            vm.displayFeature = false;
+          }, defaultStyle)
           // click: mapControlSrvc.selectFeatureFactory()
         });
       }

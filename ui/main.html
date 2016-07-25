@@ -1,7 +1,7 @@
 <div ng-cloak>
     <div class="ui grid header">
         <div class="left floated middle aligned ten wide column">
-            <h1>立法會選舉數據庫 </h1>
+            <h1>香港立法會選舉數據庫 </h1>
             <div class="ui dropdown">
                 <div class="text">{{vm.selectedDataType.legend}}</div>
                 <i class="dropdown icon"></i>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- <leaflet id="mymap" tiles="vm.tiles" lf-center="vm.center" height="600px" width="800px"></leaflet> -->
-    <div cg-busy="vm.dataPromise" class="ui pushable twelve column">
+    <div cg-busy="{promise:vm.dataPromise,message:'載入中...'}" class="ui pushable twelve column">
         <div class="pusher">
             <hk-map height="500px" class="col-md-12" geo-shapes="vm.geoShapes" value-formatter="vm.valueFormatter" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
             <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">

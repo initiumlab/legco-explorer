@@ -75,8 +75,8 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
 .run(['$route', '$rootScope', '$location', function($route, $rootScope, $location) {
   var original = $location.path;
   $location.path = function(path, reload) {
-    console.log('reload');
-    console.log(reload);
+    console.log('location.path');
+    console.log(arguments);
     if (reload === false) {
       path = path.replace(/\/?$/, '/');
       // prevent further redirect /population/dc -> /population/dc/

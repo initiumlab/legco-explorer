@@ -82,7 +82,8 @@ export default class MainCtrl {
 
     vm.toggleCharts = function() {
       let chartOpenSearch = vm.isChartOpen ? null : 1;
-      $location.search('charts', chartOpenSearch);
+      // gave up keep in sync first as forced fresh for unknown reason
+      // $location.search('charts', chartOpenSearch);
       _doToggleCharts();
     };
     function _doToggleCharts() {
@@ -124,6 +125,10 @@ export default class MainCtrl {
       } else {
         vm.isByE = false;
       }
+      if (vm.isChartOpen) {
+        _doToggleCharts();
+      }
+
             // TODO multiple chart
       vm.chartTitle = vm.selectedDataType.chartTitle;
       _loadDataAndDraw(vm.selectedDataType.key);
@@ -135,7 +140,7 @@ export default class MainCtrl {
     if (dataType) {
       _updateDataType(dataType);
     } else {
-      this.$location.path('/population?by=gc');
+      this.$location.path('/population/gc/');
     }
 
         // TODO service
@@ -203,10 +208,13 @@ export default class MainCtrl {
                    .transitionDuration(1000)
                    .margins({top: 30, right: 50, bottom: 25, left: 40})
                    .x(d3.scale.ordinal())
+                   .elasticY(true)
+                   .elasticX(true)
                   // .x(d3.time.scale().domain([moment("1234", "hmm").toDate()]))
                    .xUnits(dc.units.ordinal)
                    .dimension(timeDimension)
                    .group(votersbyTimeGroup)
+                   .renderVerticalGridLines(true)
                    .renderHorizontalGridLines(true)
                    .valueAccessor(function(d) {
                      return d.value;
@@ -237,10 +245,11 @@ export default class MainCtrl {
             }, function accessor(v) {
               return numeral(v.voters).divide(v.electors).value();
             });
-            console.log('filter');
-            console.log(filter);
             if (filter) {
-              chart.filter(filter).redraw();
+              chart.filter(filter);
+            }
+            if (chart.svg()) {
+              chart.redraw();
             }
             $location.search('dc', chart.filters()[0]);
           };
@@ -267,8 +276,6 @@ export default class MainCtrl {
             var data = aggByKeys(ageDimension.top(ndx.size()));
             vm.geoData = new GeoDataModel(data, 'dc');
                       // $scope.$digest();
-            console.log('filter');
-            // console.log(chart.filter());
 
             if (filters) {
               chart.filter([filters]);
@@ -318,6 +325,9 @@ export default class MainCtrl {
         $scope.$watch('vm.year', (newVal, oldVal) => {
           yearDimension.filter(newVal);
           onFilter();
+          if (vm.geoData.isEmpty() && vm.isChartOpen) {
+            vm.toggleCharts();
+          }
         });
 
         chart = _createChart(createChartStrategy, onFilter);

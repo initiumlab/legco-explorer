@@ -9,11 +9,12 @@
    constructor(...args) {
      Object.assign(this, _.zipObject(toInjects, args));
    }
-   mouseoutHandlerFactory(defaultStyle) {
+   mouseoutHandlerFactory(featureCallback, defaultStyle) {
      return function(e) {
       // Can't use resetStyle because we don't have access to the GeoJSON object
        var layer = e.target;
        layer.setStyle(defaultStyle);
+       featureCallback(e.target.feature);
        // var code = _getLayerCode(e);
       // Only reset if the area is not selected
        // if (!vm.selectedAreas.isSelected(code)) {
