@@ -8,6 +8,7 @@
   {
     "alias":"turnout",
     "key": "vt_by_gc_ps_hour",
-    "legend": "投票率"
+    "legend": "投票率",
+    "chartTitle":"按時間投票人數"
   }
 ]

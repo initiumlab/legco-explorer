@@ -71,13 +71,17 @@
        }
      });
    }
-   redrawMap(mapId, featureStyler, invalidateSize) {
+   redrawMap(mapId, featureStyler, invalidateSize, targetZoom) {
      console.log('redraw');
      let that = this;
      this.getMap(mapId).then(function(map) {
        if (invalidateSize) {
          map.invalidateSize();
        }
+       if (!_.isNil(targetZoom)) {
+         map.zoomIn(targetZoom - map._zoom);
+       }
+
        that.updateStyle(map, featureStyler);
      });
    }

@@ -32,7 +32,7 @@ class HkMapCtrl {
     vm.defaults = {
       scrollWheelZoom: true,
       maxZoom: 18,
-      minZoom: 11
+      minZoom: 10
     };
 
     vm.center = {
@@ -41,6 +41,7 @@ class HkMapCtrl {
       zoom: 11
     };
 
+    // todo refactor into config
     vm.layers = {
       baselayers: {
         googleRoadMap: {
@@ -51,8 +52,12 @@ class HkMapCtrl {
       }
     };
 
+    vm.geocodeFormatter = v => {
+      return this.geoMappingsSrvc.getNameByBoundary(v, vm.boundary);
+    };
+
    // The zoom level after which areas are drawn
-    var AREATHRESHOLD = 14;
+    var AREATHRESHOLD = 13;
 
     // If we zoom in further than >= 14, then switch over to the constituency areas layer
     this.$scope.$watch('vm.center.zoom', function(newVal) {
@@ -120,9 +125,9 @@ class HkMapCtrl {
         // }
         // TODO optimize this
        // So instead, use a listener.
-    this.$scope.$on('redrawMap', function(event, invalidateSize) {
+    this.$scope.$on('redrawMap', function(event, invalidateSize, targetZoom) {
       console.log('redrawing map');
-      mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize);
+      mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize, targetZoom);
     });
 
     function getGeoCodeByFeature(feature) {
@@ -153,7 +158,18 @@ class HkMapCtrl {
       return vm.groupedData;
     }
 
+    function updateShapePerBoundary(boundary) {
+      if (boundary === 'gc') {
+        vm.geojson.data = vm.geoShapes.gc;
+      } else if (boundary === 'ca') {
+        vm.geojson.data = vm.geoShapes.areas;
+      } else {
+        vm.geojson.data = vm.geoShapes.districts;
+      }
+    }
     this.$scope.$watch('vm.boundary', function() {
+            // event for zoom level
+      updateShapePerBoundary(vm.boundary);
       _updateGroupedData();
       mapControlSrvc.redrawMap(mapId, featureStyler);
     });
@@ -173,22 +189,6 @@ class HkMapCtrl {
       return !_.isUndefined(f.properties.CA);
     };
 
-   // Handlers for interaction
-    var mouseoverHandler = function(e) {
-      var layer = e.target;
-      var code = _getLayerCode(e);
-     // only change the style if the area is not already selected
-      if (!vm.selectedAreas.isSelected(code)) {
-        layer.setStyle(vm._hoverStyle);
-        if (!L.Browser.ie && !L.Browser.opera) {
-          layer.bringToFront();
-        }
-      }
-
-      var prefix = _isArea(e.target.feature) ? "area." : "district.";
-      vm.hoveredFeature = prefix + code.toLowerCase();
-    };
-
     var _getLayerCode = function(e) {
       return e.target.feature.properties.CODE;
     };
@@ -202,7 +202,7 @@ class HkMapCtrl {
           mouseover: mapControlSrvc.mouseoverHandlerFactory(function(feature) {
             // TODO work as closure, further encap this
             // TODO fix post filter
-            vm.hoveredFeature = getGeoCodeByFeature(feature);
+            vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
             vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
           }, hoverStyle),
 
@@ -213,21 +213,11 @@ class HkMapCtrl {
         });
       }
     };
-    this.$scope.$watch('vm.geoShapes', function(newVal) {
+    // TODO fix this temp hack to trigger shape load
+    this.$scope.$watch('vm.geoShapes.gc', function(newVal) {
       if (!_.isEmpty(newVal)) {
-        vm.geojson.data = newVal;
+        updateShapePerBoundary(vm.boundary);
         console.log('shape updated');
-        // vm.getMap().then(function(map) {
-          // console.log(arguments);
-          // vm.geojson.data.
-
-          // var polygonCenter = layer.getBounds().getCenter();
-
-// e.g. using Leaflet.label plugin
-    //       L.marker(polygonCenter)
-    // .bindLabel(feature.properties['NAME'], {noHide: true})
-    // .addTo(map);
-        // });
       }
     });
   }

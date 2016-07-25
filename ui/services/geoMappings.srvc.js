@@ -5,6 +5,7 @@
  * Basically a set of metadata
  */
 import gcMapping from '../../data/source/geocode/lc_mapping.json';
+import geocodeMapping from '../../data/source/geocode/2012_hant.json';
 import _ from 'lodash';
 export default class GeoMappings {
   constructor() {
@@ -96,6 +97,26 @@ export default class GeoMappings {
   }
   getAllGCs() {
     return _.keys(this._data.gc);
+  }
+  getNameByGc(gc) {
+    return gcMapping[gc].name_hant;
+  }
+  getNameByCa(ca) {
+    return geocodeMapping.ca[ca];
+  }
+  getNameByDc(dc) {
+    return geocodeMapping.dc[dc];
+  }
+  // TODO refactor, centralized / strategy
+  getNameByBoundary(code, boundary) {
+    if (boundary === 'dc') {
+      return this.getNameByDc(code);
+    } else if (boundary === 'gc') {
+      return this.getNameByGc(code);
+    } else if (boundary === 'ca') {
+      return this.getNameByCa(code);
+    }
+    return boundary;
   }
   // // TODO level
   // _doGroupByBoundary(data, byBoundary) {

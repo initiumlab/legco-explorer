@@ -58,12 +58,12 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
   }
   return prettyPrintJson;
 })
-.filter('yearFilter', () => {
+.filter('yearElectionFilter', () => {
   // TODO decouple year & election
   return year => {
     if (_.includes([2008, 2012, 2016], year)) {
-      return year + ' - 立法會選舉';
+      return '立法會選舉';
     }
-    return year;
+    return ' ';
   };
 });
