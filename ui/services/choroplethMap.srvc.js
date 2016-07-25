@@ -18,10 +18,15 @@ export default class ChoroplethMapSrvc {
   updateState(data) {
     console.log('update choropleth state');
     let max = 1;
+    let min = 0;
+    let diff = 0;
     if (!_.isEmpty(data)) {
       max = _.max(_.values(data));
+      min = _.min(_.values(data));
+      // smoothen the diff for close values
+      diff = (max - min) / 2;
     }
-    this._setupScales([0, max]);
+    this._setupScales([min - diff, max + diff]);
   }
   setupStyle(defaultStyle) {
     this._defaultStyle = defaultStyle;

@@ -141,7 +141,7 @@ class HkMapCtrl {
 
     function _updateGroupedData() {
       if (!vm.geoData || _.isEmpty(vm.geoData)) {
-        // init, to refactor
+        // TODO init, to refactor & needa distinguish init vs error (e.g. 404)
         vm.isNoData = false;
       } else if (vm.geoData && !vm.geoData.isEmpty()) {
         vm.groupedData = vm.geoData.groupByBoundary(vm.boundary);
@@ -155,6 +155,7 @@ class HkMapCtrl {
 
     this.$scope.$watch('vm.boundary', function() {
       _updateGroupedData();
+      mapControlSrvc.redrawMap(mapId, featureStyler);
     });
     this.$scope.$watch('vm.geoData', function() {
       _updateGroupedData();
@@ -192,6 +193,7 @@ class HkMapCtrl {
       return e.target.feature.properties.CODE;
     };
     var hoverStyle = this.mapStyleConfig.hover;
+    var defaultStyle = this.mapStyleConfig.default;
     vm.geojson = {
       data: null,
       style: featureStyler,
@@ -199,10 +201,14 @@ class HkMapCtrl {
         layer.on({
           mouseover: mapControlSrvc.mouseoverHandlerFactory(function(feature) {
             // TODO work as closure, further encap this
+            // TODO fix post filter
             vm.hoveredFeature = getGeoCodeByFeature(feature);
-            vm.hoveredFeatureValue = getDataByFeature(feature);
+            vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
           }, hoverStyle),
-          mouseout: mapControlSrvc.mouseoutHandlerFactory(vm._defaultStyle)
+
+          // chart specific injected here
+          // OR separate formated value & choro value
+          mouseout: mapControlSrvc.mouseoutHandlerFactory(defaultStyle)
           // click: mapControlSrvc.selectFeatureFactory()
         });
       }
@@ -235,7 +241,8 @@ export default {
   bindings: {
     geoShapes: '=',
     geoData: '=',
-    boundary: '='
+    boundary: '=',
+    valueFormatter: '='
   },
   controllerAs: 'vm',
   template: function($element, $attrs) {

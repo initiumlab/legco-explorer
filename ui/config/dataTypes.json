@@ -7,7 +7,7 @@
   },
   {
     "alias":"turnout",
-    "key": "vt_by_gc_ps",
+    "key": "vt_by_gc_ps_hour",
     "legend": "投票率"
   }
 ]
