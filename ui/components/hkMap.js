@@ -57,7 +57,7 @@ class HkMapCtrl {
     };
 
    // The zoom level after which areas are drawn
-    var AREATHRESHOLD = 14;
+    var AREATHRESHOLD = 13;
 
     // If we zoom in further than >= 14, then switch over to the constituency areas layer
     this.$scope.$watch('vm.center.zoom', function(newVal) {
@@ -158,7 +158,18 @@ class HkMapCtrl {
       return vm.groupedData;
     }
 
+    function updateShapePerBoundary(boundary) {
+      if (boundary === 'gc') {
+        vm.geojson.data = vm.geoShapes.gc;
+      } else if (boundary === 'ca') {
+        vm.geojson.data = vm.geoShapes.areas;
+      } else {
+        vm.geojson.data = vm.geoShapes.districts;
+      }
+    }
     this.$scope.$watch('vm.boundary', function() {
+            // event for zoom level
+      updateShapePerBoundary(vm.boundary);
       _updateGroupedData();
       mapControlSrvc.redrawMap(mapId, featureStyler);
     });
@@ -202,21 +213,11 @@ class HkMapCtrl {
         });
       }
     };
-    this.$scope.$watch('vm.geoShapes', function(newVal) {
+    // TODO fix this temp hack to trigger shape load
+    this.$scope.$watch('vm.geoShapes.gc', function(newVal) {
       if (!_.isEmpty(newVal)) {
-        vm.geojson.data = newVal;
+        updateShapePerBoundary(vm.boundary);
         console.log('shape updated');
-        // vm.getMap().then(function(map) {
-          // console.log(arguments);
-          // vm.geojson.data.
-
-          // var polygonCenter = layer.getBounds().getCenter();
-
-// e.g. using Leaflet.label plugin
-    //       L.marker(polygonCenter)
-    // .bindLabel(feature.properties['NAME'], {noHide: true})
-    // .addTo(map);
-        // });
       }
     });
   }

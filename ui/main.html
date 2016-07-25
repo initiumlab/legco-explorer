@@ -44,7 +44,7 @@
     <!-- <leaflet id="mymap" tiles="vm.tiles" lf-center="vm.center" height="600px" width="800px"></leaflet> -->
     <div cg-busy="vm.dataPromise" class="ui pushable twelve column">
         <div class="pusher">
-            <hk-map height="500px" class="col-md-12" geo-shapes="vm.geojson" value-formatter="vm.valueFormatter" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
+            <hk-map height="500px" class="col-md-12" geo-shapes="vm.geoShapes" value-formatter="vm.valueFormatter" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
             <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">
                 <i class="dropdown icon"></i>數據圖表
             </div>

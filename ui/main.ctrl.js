@@ -32,19 +32,9 @@ export default class MainCtrl {
 
     vm.toggleBoundary = function(boundary) {
       vm.boundary = boundary;
-      if (boundary === 'gc') {
-        vm.geojson = vm.geoShapes.gc;
-      } else if (boundary === 'ca') {
-        vm.geojson = vm.geoShapes.areas;
-      } else {
-        vm.geojson = vm.geoShapes.districts;
-      }
-            // event for zoom level
     };
 
     vm.boundary = 'gc';
-
-    vm.geojson = null;
 
     this.geoShapeSrvc.getDC()
             .then(function(data) {
@@ -57,7 +47,7 @@ export default class MainCtrl {
     this.geoShapeSrvc.getGC()
             .then(function(data) {
               vm.geoShapes.gc = data;
-              vm.geojson = vm.geoShapes.gc;
+              // vm.geojson = vm.geoShapes.gc;
             });
         // chroma.scale(['yellow', '008ae5']).mode('lch');
     vm.year = 2016;
@@ -309,10 +299,11 @@ export default class MainCtrl {
                           .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]))
                           .brushOn(false)
                           .clipPadding(20)
+                          .renderHorizontalGridLines(true)
                           // .ordinalColors(['#0A2463', '#FFFFFF', '#D81C1C', '#3E92CC', '#1E1B18'])
-                          // .ordinalColors(['#99c0db', '#fb8072'])
-                          .ordinalColors(['#9AC5E2', '#F7B8A1'])
-                          .renderLabel(true);
+                          .ordinalColors(['#99c0db', '#fb8072']);
+                          // .ordinalColors(['#9AC5E2', '#F7B8A1'])
+                          // .renderLabel(true);
           };
         }
                 // manual hook as out of chart
