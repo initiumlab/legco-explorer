@@ -1,8 +1,8 @@
 module.exports = {
-  "extends": "google",
-  "rules":{
-    camelcase: ["error", {properties: "never"}],
-    "quote-props": [0],
+  'extends': 'google',
+  'rules':{
+    camelcase: ['error', {properties: 'never'}],
+    'quote-props': [0],
     'no-unused-vars': [1],
     'no-implicit-coercion': [0],
     'new-cap': [0],
@@ -12,11 +12,12 @@ module.exports = {
     'camelcase':[0],
     'valid-jsdoc':[0]
   },
-  "globals": {
-    "it": true,
-    "describe": true,
-    "expect": true,
-    "_": true,
-    "$": true
+  'globals': {
+    'it': true,
+    'describe': true,
+    'expect': true,
+    '_': true,
+    '$': true,
+    'angular':true
   }
 }

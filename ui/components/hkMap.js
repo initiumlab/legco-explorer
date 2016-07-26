@@ -194,6 +194,13 @@ class HkMapCtrl {
     };
     var hoverStyle = this.mapStyleConfig.hover;
     var defaultStyle = this.mapStyleConfig.default;
+
+    let displayValueByFeature = function(feature) {
+      vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
+      vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
+      vm.displayFeature = true;
+    };
+
     vm.geojson = {
       data: null,
       style: featureStyler,
@@ -202,9 +209,7 @@ class HkMapCtrl {
           mouseover: mapControlSrvc.mouseoverHandlerFactory(function(feature) {
             // TODO work as closure, further encap this
             // TODO fix post filter
-            vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
-            vm.hoveredFeatureValue = vm.valueFormatter(getDataByFeature(feature));
-            vm.displayFeature = true;
+            displayValueByFeature(feature);
           }, hoverStyle),
 
           // chart specific injected here
@@ -215,6 +220,8 @@ class HkMapCtrl {
           click: function(e) {
             // TODO find leaflet event
             let geoCode = getGeoCodeByFeature(e.target.feature);
+            // also display when click, as quick workaround for mobile.
+            displayValueByFeature(e.target.feature);
             $scope.$emit('feature.clicked', geoCode, geoMappingsSrvc.getNameByBoundary(geoCode, vm.boundary));
 
             $scope.$digest();
