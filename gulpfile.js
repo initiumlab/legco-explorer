@@ -24,7 +24,7 @@ gulp.task('build', ['copy', 'webpack']);
 
 gulp.task('deploy', ['build'], function() {
   return gulp.src(DIST + '/**/*')
-    // .pipe(file('CNAME', ''))
+    .pipe(file('CNAME', 'legco-explorer.initiumlab.com'))
    .pipe(ghPages({
    }));
 });
