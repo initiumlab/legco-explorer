@@ -5,6 +5,8 @@ var changed = require('gulp-changed');
 var webpackConfig = require('./webpack.config.js');
 var file = require('gulp-file');
 var DIST = 'dist';
+var concat = require('gulp-concat');
+var merge = require('merge-stream');
 process.env.NODE_ENV = 'prd';
 gulp.task('webpack', function(callback) {
     // run webpack
@@ -15,9 +17,12 @@ gulp.task('webpack', function(callback) {
 });
 
 gulp.task('copy', function() {
-  gulp.src('./ui/images/**')
+  return merge(gulp.src('./ui/images/**')
     .pipe(changed(DIST + '/images'))
-    .pipe(gulp.dest(DIST + '/images'));
+    .pipe(gulp.dest(DIST + '/images')),
+  gulp.src('./data/**')
+      .pipe(changed(DIST + '/data'))
+      .pipe(gulp.dest(DIST + '/data')));
 });
 
 gulp.task('build', ['copy', 'webpack']);

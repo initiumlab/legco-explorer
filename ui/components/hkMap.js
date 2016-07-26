@@ -236,10 +236,10 @@ export default {
     valueFormatter: '='
   },
   controllerAs: 'vm',
-  template: function($element, $attrs) {
+  template: ['$element', '$attrs', function($element, $attrs) {
     // access to $element and this.$attrs
     return require('./hkMap.html');
-  }
+  }]
 
   // compile: function(elem, attrs) {
   //   var leafletNode = angular.element(elem.children()[0]);

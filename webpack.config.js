@@ -2,7 +2,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 var path = require('path');
 var srcExcludeFolders = '';
-module.exports = {
+
+var config = {
   entry: {
     'app': 'ui/index.js',
     'vendors': [
@@ -68,6 +69,17 @@ module.exports = {
     '$': 'jquery',
     'window.$': 'jquery'
     // datamap: 'datamaps/dist/datamaps.hkg.min.js'
-  })],
-  devtool: "eval"
+  }), new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false,
+      drop_console: true
+    }
+  })]
+  // devtool: "eval"
 };
+
+if (process.env.NODE_ENV === 'DEV') {
+  config.devtool = 'eval';
+}
+
+module.exports = config;

@@ -7,8 +7,8 @@
 import _ from 'lodash';
 import chroma from 'chroma-js';
 export default class ChoroplethMapSrvc {
-  constructor($http) {
-    Object.assign(this, {$http});
+  constructor() {
+    // Object.assign(this, {});
     // TODO handle also selected
     // ordinal as default
     this.choroplethState = {

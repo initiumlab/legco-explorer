@@ -196,12 +196,14 @@ export default class MainCtrl {
 // clear
         if (dataType === 'vt_by_gc_ps_hour') {
           timeDimension = ndx.dimension(d => d.time);
-
+          let gcDimension = ndx.dimension(d => d.gc);
+          let dcDimension = ndx.dimension(d => d.dc);
           votersbyTimeGroup = timeDimension.group().reduceSum(d => d.value);
 
           createChartStrategy = function(elemSelector) {
             console.log('line chart');
             timeDimension.filterAll();
+
             // TODO stack electors
             return dc.lineChart(elemSelector)
                    .renderArea(true)

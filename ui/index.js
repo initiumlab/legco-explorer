@@ -38,6 +38,9 @@ angular.module('app', ['leaflet-directive', 'rzModule', 'angularSemanticUi',
 .service('choroplethMapSrvc', ChoroplethMapSrvc)
 .value('mapStyleConfig', mapStyleConfig)
 .value('dataTypesConfig', dataTypesConfig)
+.config(['$logProvider', function($logProvider) {
+  $logProvider.debugEnabled(false);
+}])
 .config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
     $routeProvider
