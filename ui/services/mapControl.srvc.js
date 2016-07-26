@@ -76,13 +76,12 @@
      console.log('redraw');
      let that = this;
      this.getMap(mapId).then(function(map) {
-       if (invalidateSize) {
-         map.invalidateSize();
-       }
        if (!_.isNil(targetZoom)) {
          map.zoomIn(targetZoom - map._zoom);
        }
-
+       if (invalidateSize) {
+         map.invalidateSize();
+       }
        that.updateStyle(map, featureStyler);
      });
    }
