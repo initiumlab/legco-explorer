@@ -32,7 +32,6 @@
          layer.bringToFront();
        }
        featureCallback(e.target.feature);
-       console.log(e.target.feature);
      };
    }
   //  selectFeatureFactory(e) {
