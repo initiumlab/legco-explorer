@@ -50,7 +50,7 @@ export default class GeoMappings {
   getDistrictsFromRegion(region) {
     region = region.toLowerCase();
     if (_.isUndefined(this._data.geoTree[region])) {
-      throw String(region) + ' is not a valid region';
+      throw new Error(`${region} is not a valid region`);
     } else {
       return _.keys(this._data.geoTree[region]);
     }
@@ -67,18 +67,17 @@ export default class GeoMappings {
       }
     }
 
-    throw String(district) + ' is not a valid district';
+    throw new Error(`${district} is not a valid district`);
   }
 
   // District from Area
   // Simply the first letter of the code, but structure as a promise for consistency
   getDistrictFromArea(area) {
     var district = area.toLowerCase().charAt(0);
-    if (!_.includes(this._data.districts, district)) {
-      throw String(district) + ' is not a valid district';
-    } else {
+    if (_.includes(this._data.districts, district)) {
       return district;
     }
+    throw new Error(`${district} is not a valid district`);
   }
 
   // Areas from District

@@ -275,7 +275,7 @@ export default class MainCtrl {
                 let electors = _.sumBy(leaves, l => l['electors']);
                 return {voters, electors};
               })
-              .entries(timeDimension.filter('2230').top(ndx.size()));
+              .entries(timeDimension.filter('2230').top(Infinity));
               timeDimension.filterAll();
               // TODO one off filter?
               let byDc = _.merge({}, ...byDcEntries.map(o => _.fromPairs([[o.key, o.values]])));
@@ -302,7 +302,25 @@ export default class MainCtrl {
           };
         } else {
           const ageDimension = ndx.dimension(d => d.age_group);
-          let valueAccessor;
+          let valueAccessor = v => v.total;
+          let agePopulation = (ageGroup, population) => {
+            let [min, max] = ageGroup.split('-').map(v => numeral(v).value());
+            if (_.isUndefined(max) || max === 0) {
+              // 71 or above is roughly estimated from "70 or above" per 2015 year end data here,
+              // where 85+ is estimated as 87
+              // http://www.censtatd.gov.hk/hkstat/sub/sp20_tc.jsp?productCode=B1010002
+              // TODO request per-year data
+              max = 77;
+            }
+            return ((max + min) / 2) * population;
+          };
+          let calculateAgeAvg = function(valueAccessor) {
+            let total = ageDimension.groupAll().reduceSum(v => {
+              return agePopulation(v.age_group, valueAccessor(v));
+            }).value();
+            return numeral(total / ageDimension.groupAll().reduceSum(valueAccessor).value()).format('0');
+          };
+
                   // TODO simplify reduceSumByKey
                   // grouped total Population by age group
           let _createAgeDimensionGroup = (ageDimension, accessor) => {
@@ -326,7 +344,7 @@ export default class MainCtrl {
             var data = aggByKeys(ageDimension.top(ndx.size()));
             vm.geoData = new GeoDataModel(data, 'dc');
                       // $scope.$digest();
-
+            vm.ageAvg = calculateAgeAvg(valueAccessor);
             if (filters) {
               chart.filter([filters]);
             }
@@ -347,7 +365,7 @@ export default class MainCtrl {
               }
                         // TODO validations
               ageDimension.filterFunction(ageGroup => _.includes(ageGroupFilter, ageGroup));
-              if (ageDimension.top(ndx.size()).length === 0) {
+              if (ageDimension.top(Infinity).length === 0) {
                 ageDimension.filterAll();
               } else {
                 onFilter(ageGroupFilter);
@@ -362,12 +380,22 @@ export default class MainCtrl {
                   return model.groupByBoundary(vm.boundary)[geoCode];
                 };
               },
-              () => {},
+              () => {
+                // reset valueAccessor
+                valueAccessor = v => v.total;
+              },
               (event, geoCode, geoCodeFormatted) => {
                 // hack to manually select the value as data isn't proper in geo dimension
                 const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
                 chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
                 .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
+
+                console.log('all ages');
+
+                // let total = ageDimension.groupAll().reduceSum(v => {
+                //   return agePopulation(v.age_group, valueAccessor(v));
+                // }).value();
+                // vm.ageAvg = numeral(total / ageDimension.groupAll().reduceSum(valueAccessor).value()).format('0');
                 onFilter();
                 $scope.$digest();
               }
@@ -386,7 +414,8 @@ export default class MainCtrl {
                           .clipPadding(20)
                           .renderHorizontalGridLines(true)
                           // .ordinalColors(['#0A2463', '#FFFFFF', '#D81C1C', '#3E92CC', '#1E1B18'])
-                          .ordinalColors(['#99c0db', '#fb8072']);
+                          .ordinalColors(['#99c0db', '#fb8072'])
+                          .title(d => numeral(_.sum(_.values(d.value))).format('0,0'));
                           // .ordinalColors(['#9AC5E2', '#F7B8A1'])
                           // .renderLabel(true);
           };

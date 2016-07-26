@@ -59,6 +59,7 @@
         <div class="ui grid centered container charts_drawer">
             <div class="sixteen wide centered aligned column">
                 <h3 class="row">{{vm.chartTitle}} - {{ vm.selectedGeoshape }}</h3>
+                <div ng-if="vm.ageAvg">平均年齡（估算） - {{vm.ageAvg}}</div>
                 <div id="chart-container" class="row">
                 </div>
             </div>
