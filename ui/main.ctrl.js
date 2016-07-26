@@ -32,6 +32,19 @@ export default class MainCtrl {
     vm.dataTypesConfig = this.dataTypesConfig;
 
     let removeGeoClickCb;
+    let _geoClickSelectFactory = (onSelected, onReSelected, onClick) => (event, geoCode, geoCodeFormatted) => {
+      if (vm.selectedGeoCode !== geoCode) {
+          // quick impl of unselect
+        vm.selectedGeoCode = geoCode;
+        vm.selectedGeoshape = geoCodeFormatted;
+        onSelected(event, geoCode, geoCodeFormatted);
+      } else {
+        onReSelected(event.geoCode, geoCodeFormatted);
+        _initSelection();
+      }
+      onClick(event, geoCode, geoCodeFormatted);
+    };
+
         // TODO refactor away jquery
     $('.ui.dropdown')
             .dropdown({
@@ -203,13 +216,32 @@ export default class MainCtrl {
 // clear
         if (dataType === 'vt_by_gc_ps_hour') {
           timeDimension = ndx.dimension(d => d.time);
-          let gcDimension = ndx.dimension(d => d.gc);
-          let dcDimension = ndx.dimension(d => d.dc);
+          let gcDimension = ndx.dimension(d => d.gc.toLowerCase());
+          let dcDimension = ndx.dimension(d => d.dc.toLowerCase());
           votersbyTimeGroup = timeDimension.group().reduceSum(d => d.value);
 
           createChartStrategy = function(elemSelector) {
             console.log('line chart');
             timeDimension.filterAll();
+
+            removeGeoClickCb = $scope.$on('feature.clicked', _geoClickSelectFactory(
+              (event, geoCode, geoCodeFormatted) => {
+                if (vm.boundary === 'gc') {
+                  gcDimension.filter(geoCode);
+                } else if (vm.boundary === 'dc') {
+                  dcDimension.filter(geoCode);
+                }
+              },
+              (event, geoCode, geoCodeFormatted) => {
+                gcDimension.filterAll();
+                dcDimension.filterAll();
+              }, () => {
+                // hacky flag to prevent choropleth update now
+                onFilter(null, true);
+                $scope.$digest();
+              // vm.geoData
+              }
+            ));
 
             // TODO stack electors
             return dc.lineChart(elemSelector)
@@ -234,26 +266,28 @@ export default class MainCtrl {
           // or custom handling for dcDimension to get directly, since gc also mapped
           // TODO agg by .dc, using d3
           // or reuse dimensiongroup
-          onFilter = function(filter) {
-            let byDcEntries =
-            d3.nest().key(d => d.dc.toLowerCase())
-            .rollup(leaves => {
-              let voters = _.sumBy(leaves, l => l.value);
-              let electors = _.sumBy(leaves, l => l['electors']);
-              return {voters, electors};
-            })
-            .entries(timeDimension.filter('2230').top(ndx.size()));
-            timeDimension.filterAll();
-            // TODO one off filter?
-            let byDc = _.merge({}, ...byDcEntries.map(o => _.fromPairs([[o.key, o.values]])));
-            vm.geoData = new GeoDataModel(byDc, 'dc', function reducer(v1, v2) {
-              return {
-                voters: _.sum([(v1 || {}).voters, (v2 || {}).voters]),
-                electors: _.sum([(v1 || {}).electors, (v2 || {}).electors])
-              };
-            }, function accessor(v) {
-              return numeral(v.voters).divide(v.electors).value();
-            });
+          onFilter = function(filter, keepGeo) {
+            if (!keepGeo) {
+              let byDcEntries =
+              d3.nest().key(d => d.dc.toLowerCase())
+              .rollup(leaves => {
+                let voters = _.sumBy(leaves, l => l.value);
+                let electors = _.sumBy(leaves, l => l['electors']);
+                return {voters, electors};
+              })
+              .entries(timeDimension.filter('2230').top(ndx.size()));
+              timeDimension.filterAll();
+              // TODO one off filter?
+              let byDc = _.merge({}, ...byDcEntries.map(o => _.fromPairs([[o.key, o.values]])));
+              vm.geoData = new GeoDataModel(byDc, 'dc', function reducer(v1, v2) {
+                return {
+                  voters: _.sum([(v1 || {}).voters, (v2 || {}).voters]),
+                  electors: _.sum([(v1 || {}).electors, (v2 || {}).electors])
+                };
+              }, function accessor(v) {
+                return numeral(v.voters).divide(v.electors).value();
+              });
+            }
             if (filter) {
               chart.filter(filter);
             }
@@ -268,6 +302,7 @@ export default class MainCtrl {
           };
         } else {
           const ageDimension = ndx.dimension(d => d.age_group);
+          let valueAccessor;
                   // TODO simplify reduceSumByKey
                   // grouped total Population by age group
           let _createAgeDimensionGroup = (ageDimension, accessor) => {
@@ -319,29 +354,24 @@ export default class MainCtrl {
               }
             });
 
-            removeGeoClickCb = $scope.$on('feature.clicked', (event, geoCode, geoCodeFormatted) => {
-              console.log('clicked');
-              let valueAccessor;
-              if (vm.selectedGeoCode !== geoCode) {
-                // quick impl of unselect
-                vm.selectedGeoCode = geoCode;
-                vm.selectedGeoshape = geoCodeFormatted;
+            removeGeoClickCb = $scope.$on('feature.clicked', _geoClickSelectFactory(
+              (event, geoCode, geoCodeFormatted) => {
                 valueAccessor = v => {
                   // inefficient but work
                   let model = new GeoDataModel(v, 'dc');
                   return model.groupByBoundary(vm.boundary)[geoCode];
                 };
-              } else {
-                _initSelection();
+              },
+              () => {},
+              (event, geoCode, geoCodeFormatted) => {
+                // hack to manually select the value as data isn't proper in geo dimension
+                const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
+                chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
+                .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
+                onFilter();
+                $scope.$digest();
               }
-              // hack to manually select the value as data isn't proper in geo dimension
-              const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
-              chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
-              .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
-              onFilter();
-              $scope.$digest();
-              // vm.geoData
-            });
+            ));
 
             return dc.barChart(elemSelector)
                           .elasticY(true)
