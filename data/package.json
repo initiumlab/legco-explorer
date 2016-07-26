@@ -1,0 +1,27 @@
+{
+  "name": "legco-election-2016-data",
+  "version": "1.0.0",
+  "description": "- Electors   - Registered - turnout",
+  "main": "articles.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/initiumlab/legco-election-2016-data.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/initiumlab/legco-election-2016-data/issues"
+  },
+  "homepage": "https://github.com/initiumlab/legco-election-2016-data#readme",
+  "dependencies": {
+    "csv": "^1.1.0",
+    "glob": "^7.0.5",
+    "lodash": "^4.13.1",
+    "mkdirp": "^0.5.1",
+    "numeral": "^1.5.3",
+    "xlsx": "^0.8.0"
+  }
+}

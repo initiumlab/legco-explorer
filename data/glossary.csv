@@ -1,0 +1,6 @@
+name_eng,name_chi,code,details
+Code of GC,地方選區代號,gc_code, e.g. LC1為香港島
+Poll Station, 票站, PS,
+Legco Election,立法會選舉, LCE,
+Voter Turnout, 累積投票人數, VT,
+Legco NTE By-Election,立法會新界東地方選區補選,LC NTE By-E, held on 2016-02-28 

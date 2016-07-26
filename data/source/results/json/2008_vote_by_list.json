@@ -1,0 +1,277 @@
+{
+  "hki":{
+    "1":{
+      "ordered_candidates":["林翠蓮","王錦泉","顏才績"],
+      "votes":2166,
+      "seats":0
+    },
+    "2":{
+      "ordered_candidates":["何秀蘭"],
+      "votes":30887,
+      "seats":1
+    },
+    "3":{
+      "ordered_candidates":["甘乃威","楊森","徐遠華"],
+      "votes":39808,
+      "seats":1
+    },
+    "4":{
+      "ordered_candidates":["曾健成"],
+      "votes":10202,
+      "seats":0
+    },
+    "5":{
+      "ordered_candidates":["曾鈺成","蔡素玉","鍾樹根","張國鈞","陳學鋒","郭偉强"],
+      "votes":60417,
+      "seats":1
+    },
+    "6":{
+      "ordered_candidates":["蕭敏華"],
+      "votes":1798,
+      "seats":0
+    },
+    "7":{
+      "ordered_candidates":["勞永樂"],
+      "votes":20523,
+      "seats":0
+    },
+    "8":{
+      "ordered_candidates":["陳淑莊","余若薇","容詠嫦"],
+      "votes":82600,
+      "seats":2
+    },
+    "9":{
+      "ordered_candidates":["葉劉淑儀","史泰祖","黃健興","陳岳鵬"],
+      "votes":61073,
+      "seats":1
+    },
+    "10":{
+      "ordered_candidates":["黎志強"],
+      "votes":3955,
+      "seats":0
+    }
+  },
+  "nte":{
+     "1":{
+      "ordered_candidates":["田北俊","簡永輝","方國珊"],
+      "votes":28875,
+      "seats":0
+    },
+     "2":{
+      "ordered_candidates":["蕭思江","容超榮"],
+      "votes":1129,
+      "seats":0
+    },
+    "3":{
+      "ordered_candidates":["劉慧卿","柯耀林"],
+      "votes":33205,
+      "seats":1
+    },
+    "4":{
+      "ordered_candidates":["黃成智","莫兆麟"],
+      "votes":44174,
+      "seats":1
+    },
+    "5":{
+      "ordered_candidates":["梁國雄"],
+      "votes":44763,
+      "seats":1
+    },
+    "6":{
+      "ordered_candidates":["李子榮"],
+      "votes":4007,
+      "seats":0
+    },
+    "7":{
+      "ordered_candidates":["鄭家富","任啓邦","何淑萍","梁里","關永業","容溟舟","林少忠"],
+      "votes":41931,
+      "seats":1
+    },
+    "8":{
+      "ordered_candidates":["湯家驊","曾國豐","曾健超"],
+      "votes":39957,
+      "seats":1
+    },
+    "9":{
+      "ordered_candidates":["龐愛蘭"],
+      "votes":20455,
+      "seats":0
+    },
+    "10": {
+       "ordered_candidates": ["劉江華", "陳克勤","莫錦貴","黃碧嬌","陳國旗","劉國勳","連楚強"],
+	"votes": 102434,
+	"seats": 2
+    }
+  },
+  "ntw":{
+     "1":{
+      "ordered_candidates":["張超雄","陳琬琛","黃家華"],
+      "votes":27910,
+      "seats":0
+    },
+    "2":{
+      "ordered_candidates":["李卓人","譚駿賢"],
+      "votes":42366,
+      "seats":1
+    },
+    "3":{
+      "ordered_candidates":["譚耀宗","張學明","梁志祥","陳恒鑌","龍瑞卿","梁嘉銘","老廣成","呂堅"],
+      "votes":92037,
+      "seats":2
+    },
+    "4":{
+      "ordered_candidates":["何俊仁","許智峯","盧民漢"],
+      "votes":36764,
+      "seats":1
+    },
+    "5":{
+      "ordered_candidates":["蔣志偉","楊智恒"],
+      "votes":6771,
+      "seats":0
+    },
+    "6":{
+      "ordered_candidates":["阮偉忠"],
+      "votes":1338,
+      "seats":0
+    },
+    "7":{
+      "ordered_candidates":["陳偉業"],
+      "votes":32182,
+      "seats":1
+    },
+    "8":{
+      "ordered_candidates":["鄒秉恬"],
+      "votes":1720,
+      "seats":0
+    },
+    "9":{
+      "ordered_candidates":["王國興","麥美娟","曾梓筠","徐帆","梁子穎","鄧家彪","姚國威","陳文偉"],
+      "votes":35991,
+      "seats":1
+    },
+    "10": {
+	"ordered_candidates": ["張賢登","鄺俊宇"],
+	"votes":10069,
+	"seats": 0
+    },
+   "11": {
+	"ordered_candidates": ["梁雪芳","THAPA KOMAL"],
+	"votes": 1366,
+	"seats": 0
+    },
+   "12": {
+	"ordered_candidates": ["周梁淑怡", "周永勤"],
+	"votes": 21570,
+	"seats": 0
+    },
+   "13": {
+	"ordered_candidates": ["梁耀忠", "黃潤達"],
+	"votes": 42441,
+	"seats": 1
+    },
+   "14": {
+	"ordered_candidates": ["李永達","王雪盈","林紹輝","張慧媚","林立志"],
+	"votes": 45767,
+	"seats": 1
+    }
+  },
+  "kle":{
+     "1":{
+      "ordered_candidates":["胡志偉"],
+      "votes":16365,
+      "seats":0
+    },
+    "2":{
+      "ordered_candidates":["陶君行"],
+      "votes":28690,
+      "seats":0
+    },
+    "3":{
+      "ordered_candidates":["陳鑑林","黎榮浩","陳曼琪","洪錦鉉"],
+      "votes":53472,
+      "seats":1
+    },
+    "4":{
+      "ordered_candidates":["梁家傑","余冠威","黃鶴鳴"],
+      "votes":39274,
+      "seats":1
+    },
+    "5":{
+      "ordered_candidates":["李華明","計明華","黃啓明","黃偉達"],
+      "votes":48124,
+      "seats":1
+    },
+    "6":{
+      "ordered_candidates":["黃國健","陳婉嫻","王吉顯","簡銘東"],
+      "votes":50320,
+      "seats":1
+    }
+  },    
+   "klw":{
+     "1":{
+      "ordered_candidates":["莊永燦"],
+      "votes":1076,
+      "seats":0
+    },
+    "2":{
+      "ordered_candidates":["李慧琼","鍾港武","陳偉明","鄭泳舜"],
+      "votes":39013,
+      "seats":1
+    },
+    "3":{
+      "ordered_candidates":["龍緯汶","韋世民"],
+      "votes":591,
+      "seats":0
+    },
+    "4":{
+      "ordered_candidates":["涂謹申","林浩揚"],
+      "votes":29690,
+      "seats":1
+    },
+    "5":{
+      "ordered_candidates":["毛孟靜","伍月蘭","鄧志盈"],
+      "votes":17259,
+      "seats":0
+    },
+    "6":{
+      "ordered_candidates":["林依麗"],
+      "votes":590,
+      "seats":0
+    },
+     "7":{
+      "ordered_candidates":["梁美芬","梁偉權","林家輝"],
+      "votes":19914,
+      "seats":1
+    },
+    "8":{
+      "ordered_candidates":["黃毓民","李偉儀"],
+      "votes":37553,
+      "seats":1
+    },
+    "9":{
+      "ordered_candidates":["田北辰","何顯明"],
+      "votes":13011,
+      "seats":0
+    },
+    "10": {
+       "ordered_candidates": ["馮檢基", "莫嘉嫻","秦寶山","黃志勇","楊振宇"],
+	"votes": 35440,
+	"seats": 1
+    },
+      "11":{
+      "ordered_candidates":["劉千石"],
+      "votes":10553,
+      "seats":0
+    },
+     "12":{
+      "ordered_candidates":["柳玉成","蔣潔鳯","徐達偉"],
+      "votes":290,
+      "seats":0
+    },
+    "13":{
+      "ordered_candidates":["譚凱邦"],
+      "votes":1603,
+      "seats":0
+    }
+   }
+}

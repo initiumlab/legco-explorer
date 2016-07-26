@@ -1,0 +1,37 @@
+{
+  "lc1":{
+    "name_hant":"香港島",
+    "alias": "hki",
+    "name_chs":"",
+    "name_eng":"Hong Kong Island",
+    "districts":["a","b","c","d"]
+  },
+  "lc2":{
+    "name_hant":"九龍西",
+    "alias": "klw",
+    "name_chs":"",
+    "name_eng":"Kowloon West",
+    "districts":["e","f","g"]
+  },
+  "lc3":{
+    "name_hant":"九龍東",
+    "alias": "kle",
+    "name_chs":"",
+    "name_eng":"Kowloon East",
+    "districts":["h","j"]
+  },
+  "lc4":{
+    "name_hant":"新界西",
+    "alias": "ntw",
+    "name_chs":"",
+    "name_eng":"New Territories West",
+    "districts":["k","l","m","s","t"]
+  },
+  "lc5":{
+    "name_hant":"新界東",
+    "alias": "nte",
+    "name_chs":"",
+    "name_eng":"New Territories East",
+    "districts":["n","p","q","r"]
+  }
+}
