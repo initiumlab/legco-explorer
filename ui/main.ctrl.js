@@ -22,8 +22,16 @@ export default class MainCtrl {
     let $timeout = this.$timeout;
     let $routeParams = this.$routeParams;
     vm.geoShapes = {};
+    vm.selectedGeoshape = '全香港';
 
+    function _initSelection() {
+      vm.selectedGeoCode = '';
+      vm.selectedGeoshape = '全香港';
+    }
+    _initSelection();
     vm.dataTypesConfig = this.dataTypesConfig;
+
+    let removeGeoClickCb;
         // TODO refactor away jquery
     $('.ui.dropdown')
             .dropdown({
@@ -148,6 +156,7 @@ export default class MainCtrl {
 
     var _createChart = function(createChartStrategy, onFilter) {
       const elemSelector = "#chart-container";
+      removeGeoClickCb ? removeGeoClickCb() : null;
       d3.select(elemSelector + " svg").remove();
       return createChartStrategy(elemSelector)
                 .turnOnControls(true)
@@ -165,8 +174,6 @@ export default class MainCtrl {
                   bottom: 20
                 })
                 .on('filtered', function(chart, filterSelected) {
-                  console.log('ar');
-                  console.log(arguments);
                   onFilter();
                   $scope.$digest();
                 });
@@ -263,16 +270,22 @@ export default class MainCtrl {
           const ageDimension = ndx.dimension(d => d.age_group);
                   // TODO simplify reduceSumByKey
                   // grouped total Population by age group
-          const ageDimensionGroup = ageDimension.group()
-                      .reduce((p, v) => {
-                        p[v.category] = (p[v.category] || 0) + v.total;
-                        return p;
-                      }, (p, v) => {
-                        p[v.category] = (p[v.category] || 0) - v.total;
-                        return p;
-                      }, () => {
-                        return {};
-                      });
+          let _createAgeDimensionGroup = (ageDimension, accessor) => {
+            if (!accessor) {
+              accessor = v => v.total;
+            }
+            return ageDimension.group()
+                                .reduce((p, v) => {
+                                  p[v.category] = (p[v.category] || 0) + accessor(v);
+                                  return p;
+                                }, (p, v) => {
+                                  p[v.category] = (p[v.category] || 0) - accessor(v);
+                                  return p;
+                                }, () => {
+                                  return {};
+                                });
+          };
+          const ageDimensionGroup = _createAgeDimensionGroup(ageDimension);
 
           onFilter = function(filters) {
             var data = aggByKeys(ageDimension.top(ndx.size()));
@@ -288,9 +301,9 @@ export default class MainCtrl {
 
             $location.search('ageGroup', chart.filters().join(','));
           };
+          const getGroupValueByKey = category => d => d.value[category];
           createChartStrategy = function(elemSelector) {
                       // TODO responsive chart
-            const getGroupValueByKey = category => d => d.value[category];
             // TODO extract
             $scope.$watch('$routeChangeSuccess', function() {
               let ageGroupFilter = $routeParams.ageGroup;
@@ -305,6 +318,31 @@ export default class MainCtrl {
                 onFilter(ageGroupFilter);
               }
             });
+
+            removeGeoClickCb = $scope.$on('feature.clicked', (event, geoCode, geoCodeFormatted) => {
+              console.log('clicked');
+              let valueAccessor;
+              if (vm.selectedGeoCode !== geoCode) {
+                // quick impl of unselect
+                vm.selectedGeoCode = geoCode;
+                vm.selectedGeoshape = geoCodeFormatted;
+                valueAccessor = v => {
+                  // inefficient but work
+                  let model = new GeoDataModel(v, 'dc');
+                  return model.groupByBoundary(vm.boundary)[geoCode];
+                };
+              } else {
+                _initSelection();
+              }
+              // hack to manually select the value as data isn't proper in geo dimension
+              const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
+              chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
+              .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
+              onFilter();
+              $scope.$digest();
+              // vm.geoData
+            });
+
             return dc.barChart(elemSelector)
                           .elasticY(true)
                           .elasticX(true)
