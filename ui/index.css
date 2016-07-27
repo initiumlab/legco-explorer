@@ -7,6 +7,17 @@
   color: #FFFFFF;
 }
 
+/*fix safari issue*/
+.ui.grid{
+  display:-webkit-flex
+}
+.ui.grid>.row{
+  display:-webkit-flex
+}
+ul.rz-ticks{
+  display:-webkit-flex
+}
+
 .year-title{
   margin-bottom:0em;
 }
