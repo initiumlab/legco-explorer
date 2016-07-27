@@ -1,43 +1,48 @@
 <div ng-cloak>
     <div class="ui grid header">
-        <div class="left floated middle aligned ten wide column">
-            <h1>香港立法會選舉數據庫 </h1>
-            <div class="ui dropdown">
-                <div class="text">{{vm.selectedDataType.legend}}</div>
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i)" data-value="{{i.key}}">{{i.legend}}</div>
+        <div class="float-row">
+            <div class="left-float">
+                <h1>香港立法會選舉數據庫 </h1>
+                <div class="ui dropdown">
+                    <div class="text">{{vm.selectedDataType.legend}}</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" ng-repeat="i in vm.dataTypesConfig" ng-click="vm.selectDataType(i)" data-value="{{i.key}}">{{i.legend}}</div>
+                    </div>
+                </div>
+                <div class="right aligned">
+                    <!-- <h2></h2> -->
                 </div>
             </div>
-            <div class="right aligned">
-                <!-- <h2></h2> -->
+            <div class="right-float">
+                <div class="ui segment">
+                    <h2 class="year-title">{{vm.year}}</h2>
+                    <h3 class="election-title">{{vm.year | yearElectionFilter:vm.isByE}}</h3>
+                </div>
             </div>
         </div>
-        <div class="right floated right aligned six wide column">
-            <div class="ui segment">
-                <h2 class="year-title">{{vm.year}}</h2>
-                <h3 class="election-title">{{vm.year | yearElectionFilter:vm.isByE}}</h3>
-            </div>
-        </div>
+
     </div>
-
     <div class="ui grid middle aligned control-panel">
-        <div class="row attached">
-            <div class="six wide column">
-                <div class="ui buttons">
-                    <button class="ui button" ng-click="vm.toggleBoundary('gc')" ng-class=" { 'selected':vm.boundary=='gc' }">立法會選區</button>
-                    <button class="ui button" ng-click="vm.toggleBoundary('dc')" ng-class=" { 'selected':vm.boundary=='dc' }">18區</button>
-                    <!-- <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button> -->
+        <div class="ui container">
+            <div class="float-row">
+                <div class="left-float">
+                    <div class="ui buttons">
+                        <button class="ui button" ng-click="vm.toggleBoundary('gc')" ng-class=" { 'selected':vm.boundary=='gc' }">立法會選區</button>
+                        <button class="ui button" ng-click="vm.toggleBoundary('dc')" ng-class=" { 'selected':vm.boundary=='dc' }">18區</button>
+                        <!-- <button class="ui button" ng-click="vm.toggleBoundary('ca')" ng-class=" { 'selected':vm.boundary=='ca' }">區議會選區</button> -->
+                    </div>
                 </div>
-            </div>
-            <div class="four wide column">
-            </div>
-            <div class="six wide column slider-continer">
-                <div class="">
-                    <rzslider rz-slider-model="vm.year" rz-slider-options="vm.slider.options"></rzslider>
-                </div>
+                <div class="right-float ">
+                    <div class="slider-container">
+                        <div class="">
+                            <rzslider rz-slider-model="vm.year" rz-slider-options="vm.slider.options"></rzslider>
+                        </div>
 
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
