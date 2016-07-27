@@ -22,14 +22,14 @@
   },
   "lc4":{
     "name_hant":"新界西",
-    "alias": "ntw",
+    "alias": "klw",
     "name_chs":"",
     "name_eng":"New Territories West",
     "districts":["k","l","m","s","t"]
   },
   "lc5":{
     "name_hant":"新界東",
-    "alias": "nte",
+    "alias": "kle",
     "name_chs":"",
     "name_eng":"New Territories East",
     "districts":["n","p","q","r"]

@@ -69,9 +69,16 @@ describe('Voter turn out', function() {
                             })
                         });
                     });
+                    //TODO
+                    // csvRawData.forEach(function(r, i) {
+                    //     it(`${f} should be valid code L${i+2}`, function() {
+                    //         expect(r[0].match(/[a-zA-Z]/)).to.be.true;
+                    //         expect(r[1].match(/[a-z]\d+/)).to.be.true;
+                    //         expect(r[2].match(/lc\d+/)).to.be.true;
+                    //     });
+                    // });
                 });
             });
-
         });
     });
 })
