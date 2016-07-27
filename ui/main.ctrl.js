@@ -191,7 +191,6 @@ export default class MainCtrl {
                   $scope.$digest();
                 });
     };
-    vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
 
     function _loadDataAndDraw(dataType) {
             // Visualize by Type
@@ -340,6 +339,7 @@ export default class MainCtrl {
           };
           const ageDimensionGroup = _createAgeDimensionGroup(ageDimension);
 
+          vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
           onFilter = function(filters) {
             var data = aggByKeys(ageDimension.top(ndx.size()));
             vm.geoData = new GeoDataModel(data, 'dc');
