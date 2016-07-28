@@ -77,7 +77,7 @@ export default class MainCtrl {
     vm.slider = {
       value: vm.year,
       options: {
-        floor: 2001,
+        floor: 2005,
         ceil: 2016,
         showTicks: true,
         hideLimitLabels: true,
