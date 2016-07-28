@@ -14,7 +14,7 @@ var FR_DC_AGE_SEX = 'fr_dc_age_sex';
 var VT_BY_GC_PS_HOUR = 'vt_by_gc_ps_hour';
 var toAgg = [FR_DC_AGE_SEX, VT_BY_GC_PS_HOUR];
 var HEADERS = {};
-HEADERS[FR_DC_AGE_SEX] = ["age_group", "category", "a", "b", "c", "d", "hki_total", "e", "f", "g", "kle_total", "h", "j", "klw_total", "k", "l", "m", "s", "t", "ntw_total", "n", "p", "q", "r", "nte_total", "total"];
+HEADERS[FR_DC_AGE_SEX] = ["age_group", "category", "a", "b", "c", "d", "hki_total", "e", "f", "g", "klw_total", "h", "j", "kle_total", "k", "l", "m", "s", "t", "ntw_total", "n", "p", "q", "r", "nte_total", "total"];
 HEADERS[VT_BY_GC_PS_HOUR] = ['dc', 'ps', 'gc', 'electors', '0830', '0930', '1030', '1130', '1230', '1330', '1430', '1530', '1630', '1730', '1830', '1930', '2030', '2130', '2230'];
 
 glob(paths + "*.+(xlsx|xls)", function(er, files) {
@@ -120,11 +120,12 @@ var fileName = f.substr(f.lastIndexOf('/')+1);
         csvData
           .forEach(function(row, i, rows) {
             row = row.map(function(s){
-              return s.trim();
+              return s.trim().replace(/\s+/g,' ');
             })
+            //replace things like Grand  Total
             if (row[1] && (row[1].replace(/\s/g,'') === 'FM' || row[1].replace(/\s/g,'')  === 'MF')) {
               var split = row.map(function(cell) {
-                return cell.split(/\s+/);
+                return cell.split(/\s/);
               }).slice(1);
 
               if(f.match(/(2012|2009|2008|2006)/)){
