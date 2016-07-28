@@ -18,6 +18,7 @@ module.exports = {
     'expect': true,
     '_': true,
     '$': true,
-    'angular':true
+    'angular':true,
+    'L':true
   }
 }

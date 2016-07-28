@@ -10,9 +10,7 @@
     "fillOpacity": 0.6
   },
   "selected":{
-    "color": "#2ca25f",
-    "fillColor": "#2ca25f",
-    "fillOpacity": 0.2,
-    "weight": 6
+    "color": "#151719",
+    "weight": 2.8
   }
 }

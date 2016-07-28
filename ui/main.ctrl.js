@@ -32,18 +32,19 @@ export default class MainCtrl {
     vm.dataTypesConfig = this.dataTypesConfig;
 
     let removeGeoClickCb;
-    let _geoClickSelectFactory = (onSelected, onReSelected, onClick) => (event, geoCode, geoCodeFormatted) => {
-      if (vm.selectedGeoCode !== geoCode) {
-          // quick impl of unselect
-        vm.selectedGeoCode = geoCode;
-        vm.selectedGeoshape = geoCodeFormatted;
-        onSelected(event, geoCode, geoCodeFormatted);
-      } else {
-        onReSelected(event.geoCode, geoCodeFormatted);
-        _initSelection();
-      }
-      onClick(event, geoCode, geoCodeFormatted);
-    };
+    let _geoClickSelectFactory =
+     (onSelected, onReSelected, onClick) => (event, geoCode, geoCodeFormatted, isSelected) => {
+       if (isSelected) {
+         vm.selectedGeoCode = geoCode;
+         vm.selectedGeoshape = geoCodeFormatted;
+         onSelected(geoCode);
+         _doToggleCharts(true);
+       } else {
+         onReSelected(geoCode);
+         _initSelection();
+       }
+       onClick(event, geoCode, geoCodeFormatted);
+     };
 
         // TODO refactor away jquery
     $('.ui.dropdown')
@@ -107,8 +108,11 @@ export default class MainCtrl {
       // $location.search('charts', chartOpenSearch);
       _doToggleCharts();
     };
-    function _doToggleCharts() {
+    function _doToggleCharts(keepOpen) {
       console.log('toggleCharts');
+      if (keepOpen && vm.isChartOpen) {
+        return;
+      }
       vm.isChartOpen = !vm.isChartOpen;
       $('.drawer.sidebar')
                 .sidebar({
@@ -224,14 +228,14 @@ export default class MainCtrl {
             timeDimension.filterAll();
 
             removeGeoClickCb = $scope.$on('feature.clicked', _geoClickSelectFactory(
-              (event, geoCode, geoCodeFormatted) => {
+              geoCode => {
                 if (vm.boundary === 'gc') {
                   gcDimension.filter(geoCode);
                 } else if (vm.boundary === 'dc') {
                   dcDimension.filter(geoCode);
                 }
               },
-              (event, geoCode, geoCodeFormatted) => {
+              geoCode => {
                 gcDimension.filterAll();
                 dcDimension.filterAll();
               }, () => {
@@ -373,7 +377,7 @@ export default class MainCtrl {
             });
 
             removeGeoClickCb = $scope.$on('feature.clicked', _geoClickSelectFactory(
-              (event, geoCode, geoCodeFormatted) => {
+              geoCode => {
                 valueAccessor = v => {
                   // inefficient but work
                   let model = new GeoDataModel(v, 'dc');
@@ -384,7 +388,7 @@ export default class MainCtrl {
                 // reset valueAccessor
                 valueAccessor = v => v.total;
               },
-              (event, geoCode, geoCodeFormatted) => {
+              geoCode => {
                 // hack to manually select the value as data isn't proper in geo dimension
                 const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
                 chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
