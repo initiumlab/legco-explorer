@@ -45,14 +45,14 @@
     <div cg-busy="{promise:vm.dataPromise,message:'載入中...'}" class="ui pushable twelve column">
         <div class="pusher">
             <hk-map height="500px" class="col-md-12" geo-shapes="vm.geoShapes" value-formatter="vm.valueFormatter" single-select selected-areas="selection" geo-data="vm.geoData" boundary="vm.boundary"></hk-map>
-            <div ng-if="!vm.isChartOpen" class="ui bottom attached button" ng-click="vm.toggleCharts()">
+            <div ng-if="!vm.isChartOpen" class="ui bottom attached button chart-button" ng-click="vm.toggleCharts()">
                 <i class="dropdown icon"></i>數據圖表
             </div>
         </div>
     </div>
     <div class="ui bottom drawer inverted labeled icon sidebar menu push">
         <div class="close">
-            <button class="ui basic inverted button" ng-click="vm.toggleCharts()">X </button>
+            <button class="ui basic inverted button chart-button" ng-click="vm.toggleCharts()">X </button>
             <!-- {{vm.geoData | prettyJSON}} -->
         </div>
 
