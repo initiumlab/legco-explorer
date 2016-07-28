@@ -30,6 +30,8 @@ class HkMapCtrl {
     let vm = this;
     let $scope = this.$scope;
     let geoMappingsSrvc = this.geoMappingsSrvc;
+    vm.selectedGeoCode = '';
+    let mapStyleConfig = this.mapStyleConfig;
    // Default initializations
     vm.defaults = {
       scrollWheelZoom: true,
@@ -42,6 +44,20 @@ class HkMapCtrl {
       lng: 114.120,
       zoom: 11
     };
+
+    function getGeoCodeByFeature(feature) {
+      // TODO extract
+      let code = '';
+      if (vm.boundary === 'gc') {
+        // TODO rename as GC_CODE
+        code = feature.properties.LC_CODE;
+      } else if (vm.boundary === 'dc') {
+        code = feature.properties.DC_CODE;
+      } else {
+        code = feature.properties.CA;
+      }
+      return code.toLowerCase();
+    }
 
     // todo refactor into config
     vm.layers = {
@@ -130,20 +146,6 @@ class HkMapCtrl {
       mapControlSrvc.redrawMap(mapId, featureStyler, invalidateSize, targetZoom);
     });
 
-    function getGeoCodeByFeature(feature) {
-      // TODO extract
-      let code = '';
-      if (vm.boundary === 'gc') {
-        // TODO rename as GC_CODE
-        code = feature.properties.LC_CODE;
-      } else if (vm.boundary === 'dc') {
-        code = feature.properties.DC_CODE;
-      } else {
-        code = feature.properties.CA;
-      }
-      return code.toLowerCase();
-    }
-
     function _updateGroupedData() {
       if (!vm.geoData || _.isEmpty(vm.geoData)) {
         // TODO init, to refactor & needa distinguish init vs error (e.g. 404)
@@ -192,8 +194,6 @@ class HkMapCtrl {
     var _getLayerCode = function(e) {
       return e.target.feature.properties.CODE;
     };
-    var hoverStyle = this.mapStyleConfig.hover;
-    var defaultStyle = this.mapStyleConfig.default;
 
     let displayValueByFeature = function(feature) {
       vm.hoveredFeature = vm.geocodeFormatter(getGeoCodeByFeature(feature));
@@ -210,19 +210,20 @@ class HkMapCtrl {
             // TODO work as closure, further encap this
             // TODO fix post filter
             displayValueByFeature(feature);
-          }, hoverStyle),
+          }, mapStyleConfig.hover),
 
           // chart specific injected here
           // OR separate formated value & choro value
           mouseout: mapControlSrvc.mouseoutHandlerFactory(function(feature) {
             vm.displayFeature = false;
-          }, defaultStyle),
+          }, mapStyleConfig.default),
           click: function(e) {
             // TODO find leaflet event
             let geoCode = getGeoCodeByFeature(e.target.feature);
             // also display when click, as quick workaround for mobile.
             displayValueByFeature(e.target.feature);
-            $scope.$emit('feature.clicked', geoCode, geoMappingsSrvc.getNameByBoundary(geoCode, vm.boundary));
+            let isSelected = mapControlSrvc.toggleSelected(e.target, mapStyleConfig);
+            $scope.$emit('feature.clicked', geoCode, geoMappingsSrvc.getNameByBoundary(geoCode, vm.boundary), isSelected);
 
             $scope.$digest();
           }

@@ -155,7 +155,13 @@ padding-left: 0.5em;
 }
 
 
-.chart-button{
+.button.chart-button{
+  font-weight: 100;
   color: white;
   background-color: #2bb6c9;
+}
+
+.button.chart-button:hover{
+  background-color: #1c8796;
+    color: white;
 }

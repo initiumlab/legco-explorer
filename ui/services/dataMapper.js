@@ -124,21 +124,23 @@ export class GeoDataModel {
     let currentBoundaryIndex = this.boundaryIndexMap[this.rawBoundary];
 
     let [filters, getAggCode] = this._getFiltersAndAggFx(data, currentBoundaryIndex);
+
+    let reduceByGeocode = (r, v, k) => {
+      let code = getAggCode(k);
+      // Quick fix to support a custom reducer for percent agg
+      // better to support dimension as data
+      if (this.reducer) {
+        r[code] = this.reducer(v, r[code]);
+      } else {
+        r[code] = v + asNumberOrZero(r[code]);
+      }
+      return r;
+    };
     while (byBoundaryIndex > currentBoundaryIndex) {
       // TODO use aggByKeys
 
       // original data vs accessed
-      data = _.reduce(_.pick(data, filters), (r, v, k) => {
-        let code = getAggCode(k);
-        // Quick fix to support a custom reducer for percent agg
-        // better to support dimension as data
-        if (this.reducer) {
-          r[code] = this.reducer(v, r[code]);
-        } else {
-          r[code] = v + asNumberOrZero(r[code]);
-        }
-        return r;
-      }, {});
+      data = _.reduce(_.pick(data, filters), reduceByGeocode, {});
       currentBoundaryIndex++;
       [filters, getAggCode] = this._getFiltersAndAggFx(data, currentBoundaryIndex);
     }

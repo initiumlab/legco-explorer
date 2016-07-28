@@ -4,17 +4,23 @@
  * @description
  * Responsible for leaflet control at interactions / reactions (e.g. redraw on size change)
  */
- const toInjects = ['leafletData'];
+ const toInjects = ['leafletData', 'mapStyleConfig'];
  export default class MapControlSrvc {
    constructor(...args) {
      Object.assign(this, _.zipObject(toInjects, args));
+     this.selectedLayer = '';
    }
    mouseoutHandlerFactory(featureCallback, defaultStyle) {
+     let that = this;
      return function(e) {
       // Can't use resetStyle because we don't have access to the GeoJSON object
        var layer = e.target;
-       layer.setStyle(defaultStyle);
+       console.log('mouseout');
+       if (!that.selectedLayer) {
+         layer.setStyle(defaultStyle);
+       }
        featureCallback(e.target.feature);
+
        // var code = _getLayerCode(e);
       // Only reset if the area is not selected
        // if (!vm.selectedAreas.isSelected(code)) {
@@ -27,12 +33,29 @@
      return function(e) {
       // TODO extract selection logic
        var layer = e.target;
-       layer.setStyle(hoverStyle);
+       if (this.selectedLayer !== layer) {
+         layer.setStyle(hoverStyle);
+       }
        if (!L.Browser.ie && !L.Browser.opera) {
          layer.bringToFront();
        }
        featureCallback(e.target.feature);
      };
+   }
+   _drawSelected() {
+     let that = this;
+     that.selectedLayer.setStyle(that.mapStyleConfig.selected);
+   }
+   toggleSelected(layer) {
+     if (this.selectedLayer === layer) {
+       layer.setStyle(this.mapStyleConfig.default);
+       this.selectedLayer = null;
+       return false;
+     } else {
+       this.selectedLayer = layer;
+       this._drawSelected(layer);
+       return true;
+     }
    }
   //  selectFeatureFactory(e) {
   //    return function(e) {
@@ -82,6 +105,7 @@
          map.invalidateSize();
        }
        that.updateStyle(map, featureStyler);
+       that._drawSelected();
      });
    }
    // Expose the map object
