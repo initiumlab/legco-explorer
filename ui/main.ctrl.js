@@ -222,7 +222,6 @@ export default class MainCtrl {
           let gcDimension = ndx.dimension(d => d.gc.toLowerCase());
           let dcDimension = ndx.dimension(d => d.dc.toLowerCase());
           votersbyTimeGroup = timeDimension.group().reduceSum(d => d.value);
-
           createChartStrategy = function(elemSelector) {
             console.log('line chart');
             timeDimension.filterAll();

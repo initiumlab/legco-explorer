@@ -59,20 +59,22 @@
         <div class="ui grid centered container charts_drawer">
             <div class="sixteen wide centered aligned column">
                 <h3 class="row">{{vm.chartTitle}} &nbsp;-&nbsp; {{ vm.selectedGeoshape }}</h3>
+                <span ng-if="vm.selectedDataType.key == 'fr_dc_age_sex'">
+
                 <div ng-if="vm.ageAvg">平均年齡（估算）&nbsp;-&nbsp; {{vm.ageAvg}}</div>
-                <div class="">
+                <div  class="">
                     所選人口： <span id="selected-total"></span> &nbsp;-&nbsp; 百份比：<span id="selected-percent"></span>
-                </div>
-
-                <div id="chart-container" class="row">
-                </div>
             </div>
+            </span>
+            <div id="chart-container" class="row">
+            </div>
+        </div>
 
-        </div>
     </div>
-    <div class="ui bottom attached footer">
-        <div class="right aligned">
-            <img class="ui middle aligned tiny image" src="images/init_logo.png" style="background-color:white;" alt="logo of Initium Lab, a black square separated by two white stripes, one horizontal and one vertical" id="labLogo">
-        </div>
+</div>
+<div class="ui bottom attached footer">
+    <div class="right aligned">
+        <img class="ui middle aligned tiny image" src="images/init_logo.png" style="background-color:white;" alt="logo of Initium Lab, a black square separated by two white stripes, one horizontal and one vertical" id="labLogo">
     </div>
+</div>
 </div>
