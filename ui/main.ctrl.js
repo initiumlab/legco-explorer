@@ -343,6 +343,23 @@ export default class MainCtrl {
           };
           const ageDimensionGroup = _createAgeDimensionGroup(ageDimension);
 
+          let filteredCountChart = dc.numberDisplay('#selected-total');
+          let filteredPerentChart = dc.numberDisplay('#selected-percent');
+          function setupFilteredNumbers(ageDimensionGroup) {
+            filteredCountChart.group(yearDimension.group().reduceSum(valueAccessor))
+            .valueAccessor(d => d.value);
+            let total = _.sumBy(ageDimensionGroup.top(Infinity), function(d) {
+              return _.sum(_.values(d.value));
+            });
+            filteredPerentChart.group(yearDimension.group().reduceSum(valueAccessor))
+            .valueAccessor(d => {
+              // precision issue
+              return Math.min((d.value / total), 1.0);
+            })
+            .formatNumber(d3.format('0.0%'));
+          }
+          setupFilteredNumbers(ageDimensionGroup);
+
           vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
           onFilter = function(filters) {
             var data = aggByKeys(ageDimension.top(ndx.size()));
@@ -354,6 +371,8 @@ export default class MainCtrl {
             }
             if (chart.svg()) {
               chart.redraw();
+              filteredCountChart.redraw();
+              filteredPerentChart.redraw();
             }
 
             $location.search('ageGroup', chart.filters().join(','));
@@ -393,7 +412,7 @@ export default class MainCtrl {
                 const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
                 chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
                 .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
-
+                setupFilteredNumbers(ageDimensionGroup);
                 console.log('all ages');
 
                 // let total = ageDimension.groupAll().reduceSum(v => {
