@@ -323,7 +323,24 @@ export default class MainCtrl {
             }).value();
             return numeral(total / ageDimension.groupAll().reduceSum(valueAccessor).value()).format('0');
           };
+          let filteredCountChart = dc.numberDisplay('#selected-total');
+          let filteredPerentChart = dc.numberDisplay('#selected-percent');
 
+          let setupFilteredNumbers = ageDimensionGroup => {
+            filteredCountChart.group(all.reduceSum(valueAccessor))
+            .valueAccessor(d => d)
+            .formatNumber(d => numeral(d).format('0,0'));
+            let total = _.sumBy(ageDimensionGroup.top(Infinity), function(d) {
+              return _.sum(_.values(d.value));
+            });
+            // need both ageDimension, year filters
+            filteredPerentChart.group(all.reduceSum(valueAccessor))
+            .valueAccessor(d => {
+              // precision issue
+              return Math.min((d / total), 1.0);
+            })
+            .formatNumber(d3.format('0.0%'));
+          };
                   // TODO simplify reduceSumByKey
                   // grouped total Population by age group
           let _createAgeDimensionGroup = (ageDimension, accessor) => {
@@ -341,24 +358,7 @@ export default class MainCtrl {
                                   return {};
                                 });
           };
-          const ageDimensionGroup = _createAgeDimensionGroup(ageDimension);
-
-          let filteredCountChart = dc.numberDisplay('#selected-total');
-          let filteredPerentChart = dc.numberDisplay('#selected-percent');
-          function setupFilteredNumbers(ageDimensionGroup) {
-            filteredCountChart.group(yearDimension.group().reduceSum(valueAccessor))
-            .valueAccessor(d => d.value);
-            let total = _.sumBy(ageDimensionGroup.top(Infinity), function(d) {
-              return _.sum(_.values(d.value));
-            });
-            filteredPerentChart.group(yearDimension.group().reduceSum(valueAccessor))
-            .valueAccessor(d => {
-              // precision issue
-              return Math.min((d.value / total), 1.0);
-            })
-            .formatNumber(d3.format('0.0%'));
-          }
-          setupFilteredNumbers(ageDimensionGroup);
+          let ageDimensionGroup = _createAgeDimensionGroup(ageDimension);
 
           vm.valueFormatter = v => numeral(v).format('0,0') + ' 人';
           onFilter = function(filters) {
@@ -369,6 +369,7 @@ export default class MainCtrl {
             if (filters) {
               chart.filter([filters]);
             }
+            setupFilteredNumbers(ageDimensionGroup);
             if (chart.svg()) {
               chart.redraw();
               filteredCountChart.redraw();
@@ -409,7 +410,7 @@ export default class MainCtrl {
               },
               geoCode => {
                 // hack to manually select the value as data isn't proper in geo dimension
-                const ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
+                ageDimensionGroup = _createAgeDimensionGroup(ageDimension, valueAccessor);
                 chart.group(ageDimensionGroup, CATEGORIES[0], getGroupValueByKey(CATEGORIES[0]))
                 .stack(ageDimensionGroup, CATEGORIES[1], getGroupValueByKey(CATEGORIES[1]));
                 setupFilteredNumbers(ageDimensionGroup);
@@ -419,7 +420,7 @@ export default class MainCtrl {
                 //   return agePopulation(v.age_group, valueAccessor(v));
                 // }).value();
                 // vm.ageAvg = numeral(total / ageDimension.groupAll().reduceSum(valueAccessor).value()).format('0');
-                onFilter();
+                onFilter(null);
                 $scope.$digest();
               }
             ));
