@@ -1,5 +1,5 @@
 ### Introduction
-- Hosted at [github]()
+- Hosted at [github](https://legco-explorer.initiumlab.com)
 - Visualization to navigate HK Election related data
 - Embedable Wigets
 
@@ -13,3 +13,6 @@
 - based on Google Style with customized eslint rules.
 - upper case for class
 - lower case for instances (angular service)
+
+## Deploy
+run `gulp deploy` to deploy as static github page
