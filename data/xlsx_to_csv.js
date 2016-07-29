@@ -86,7 +86,7 @@ var fileName = f.substr(f.lastIndexOf('/')+1);
 
     }
 
-    if (f.startsWith('./source/fr_dc_age_sex/')) {
+    if (f.startsWith('./source/fr_dc_age_sex/xlsx/')) {
       fileType = FR_DC_AGE_SEX;
       sheetIndex = 0;
       headersToAdd = HEADERS[FR_DC_AGE_SEX];
@@ -127,15 +127,16 @@ var fileName = f.substr(f.lastIndexOf('/')+1);
               var split = row.map(function(cell) {
                 return cell.split(/\s/);
               }).slice(1);
-
               if(f.match(/(2012|2009|2008|2006)/)){
                 results.push([row[0]].concat(take(split, 0)));
                 results.push([row[0]].concat(combine(take(split, 1),rows[i+1])))
               }
-              else if (f.match(/(2007|2015|2016)/)) {
+              else if (f.match(/(2015|2016)/)) {
                 results.push([row[0]].concat(take(split, 0)));
                 results.push([row[0]].concat(insert(take(split, 1), rows[i + 1])));
-              } else if (!f.match(/(2010|2011|2014)/)) {
+              }
+              else if (!f.match(/(2014)/)) {
+                console.log(f);
                 results.push([row[0]].concat(take(split, 0)));
                 results.push([row[0]].concat(take(split, 1)));
               }
@@ -148,8 +149,16 @@ var fileName = f.substr(f.lastIndexOf('/')+1);
               row[0] = tmp.substr(0, index - 1);
               row[1] = tmp.substr(index, tmp.length);
               results.push(row);
-            }  else if (i > 1 && row[0] && row[3]) {
+            } else if (i > 1 && (row[1] || row[0].startsWith('Grand') ) && row[3]) {
+                              //2011
+              console.log('match');
+              console.log(row);
               //remove footers
+              if (!row[0]){
+
+                row[0] = rows[i-1][0].trim();
+              }
+
               results.push(row);
             }
           });
