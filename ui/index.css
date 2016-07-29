@@ -86,7 +86,7 @@ ul.rz-ticks{
   stroke: white;
 }
 .angular-leaflet-map{
-  max-height: 60vh;
+  max-height: 65vh;
 }
 
 .ui.visible.bottom.sidebar.push.visible ~ .pusher .angular-leaflet-map{
