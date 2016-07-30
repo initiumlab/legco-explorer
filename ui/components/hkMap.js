@@ -103,7 +103,7 @@ class HkMapCtrl {
       }
     };
 
-    vm.tiles = tilesDict['white'];
+    vm.tiles = tilesDict.white;
     var BOUND_RANGE = 0.3;
     vm.maxBounds = this.leafletBoundsHelpers.createBoundsFromArray([
                 [vm.center.lat + BOUND_RANGE, vm.center.lng + BOUND_RANGE],
