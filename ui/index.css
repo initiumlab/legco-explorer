@@ -95,7 +95,7 @@ ul.rz-ticks{
   -webkit-transition: height 500ms ease;
     transition: height500ms ease;
   /*need calculate together with the actual header + pushed */
-  margin-top:32rem;
+  margin-top:26rem;
 }
 
 .rzslider{
@@ -116,7 +116,7 @@ ul.rz-ticks{
   margin-top: -8px;
 }
 .widget-container{
-  padding: 1em;
+  padding: 0.5em;
   border: 1px solid black;
 }
 
@@ -147,6 +147,12 @@ padding-left: 0.5em;
 
 #chart-container{
   float: none !important;
+  /*padding-left: 2vw;*/
+/*padding-right: 2vw;*/
+}
+#chart-container{
+  width: 80%;
+  margin:auto;
 }
 
 .dc-chart text{

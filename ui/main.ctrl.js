@@ -183,7 +183,7 @@ export default class MainCtrl {
                         .attr("preserveAspectRatio", "xMinYMax meet");
                   chart.redraw();
                 })
-                .height(400)
+                .height(300)
                 .margins({
                   left: 50,
                   top: 20,

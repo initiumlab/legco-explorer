@@ -7,7 +7,7 @@
       "weight": 2
   },
   "hover":{
-    "fillOpacity": 0.6
+    "fillOpacity": 0.4
   },
   "selected":{
     "color": "#151719",
