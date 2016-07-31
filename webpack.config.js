@@ -59,7 +59,7 @@ var config = {
     }
   },
   plugins: [new HtmlWebpackPlugin({
-    title: 'Legco Explorer',
+    title: '香港選舉數據庫',
     template: 'ui/index.ejs' // Load a custom template
     // inject: 'body' // Inject all scripts into the body
   }), new webpack.ProvidePlugin({
