@@ -1,7 +1,10 @@
 # legco-data
 
 ### Inventory
-- Check Google Spreadsheet currently
+- Please check at [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1z9k5rjDmm0vltQT4dI7qJf40yd2G1t2Jhnz7S66mjvY/edit#gid=0) at the moment
+
+## Glosary and code
+- [glossary.csv](glossary.csv)
 
 ### Features
 - machine-readable data with official attributed sources.
@@ -9,17 +12,15 @@
 - shapes in GeoJSON
 - Test cases to recon data
 
-Data in json should use 4 space indent, where keys are sorted with case-by-case rules.
 
 ## TODO
 - list of open data requests
 - avoid duplication as much as possible for easier maintence
 
-## Glosary and code
-- [glossary.csv](glossary.csv)
-
 ## Conventions
 ### Data
+#### json
+- Data in json should use 4 space indent, where keys are sorted with case-by-case rules.
 #### Numbers
 - keep all `,` to represent thousands, for better readability in github
 #### Others
@@ -27,19 +28,6 @@ Data in json should use 4 space indent, where keys are sorted with case-by-case 
 - in need of escaped separator in csv, `|` is preferred; use ',' in tsv
 ### Coding
 - refer to eslint config
-
-- Electors
-  - Registered
-- turnout
-
-- pollstation (ps)
-
-- DC
-
-- 專用投票站
-  - prison, mostly excluded
-
-- 地方選區代號 Code of GC gc_code
 
 ## LICENSE
 - Official Data source in the repository are under license of HKSAR, unless otherwise specified
